@@ -5,6 +5,7 @@
  *  Author: endreeg
  */ 
 
+#pragma once
 #include <stdio.h>
 //#include <xc.h>
 #include "avr/io.h"
