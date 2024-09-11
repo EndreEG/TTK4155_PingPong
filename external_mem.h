@@ -1,6 +1,7 @@
 #pragma once
 #include "avr/io.h"
-
+#define F_CPU 16000000
+#include "util/delay.h"
 #define OLED_START_ADDRESS 0x1000
 #define ADC_START_ADDRESS 0x1400
 #define SRAM_START_ADDRESS 0x1800

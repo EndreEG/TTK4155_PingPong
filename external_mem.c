@@ -10,18 +10,27 @@ void sram_init() {
 
 void SRAM_test(void)
     {
-		volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM
-        uint16_t ext_ram_size = 0x800;
-        printf("Starting SRAM test...\n");
-        // rand() stores some internal state, so calling this function in a loop will
-        // yield different seeds each time (unless srand() is called before this function)
-        // Write phase: Immediately check that the correct value was stored
-        // for (uint16_t i = 0; i < ext_ram_size; i++) {
-        uint8_t some_value = 5;
-        ext_ram[0] = some_value;
-        uint8_t retreived_value = ext_ram[0];
-        printf("%d, %d\n\r", some_value, retreived_value);
-        //}
+        printf("Starter programmet\n\r");
+        volatile char *SRAM = (char *) 0x1800;
+        volatile char *ADC = (char *) 0x1400;
+        while(1) {
+            /*uint16_t i = 0;
+            while (i < 100000)
+            {
+                i++;
+            }
+            i = 0; */
+            SRAM[0] = 15;
+            printf("Sram høy nå\n\r");
+            _delay_ms(1000);
+            /* while (i < 100000) {
+                i++;
+            }  
+            i = 0;  */     
+            ADC[0] = 15;        
+            printf("ADC høy nå\n\r");
+            _delay_ms(1000);
+        }
 }
 
 void write_sram(uint16_t address, uint8_t data) {
