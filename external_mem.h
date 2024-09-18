@@ -7,8 +7,10 @@
 #define SRAM_START_ADDRESS 0x1800
 
 void sram_init();
+void adc_init();
 void test_led();
 void SRAM_test(void);
+void ADC_test(void);
 
 void write_sram(uint16_t address, uint8_t data);
 uint8_t read_sram(uint16_t address);

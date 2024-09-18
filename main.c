@@ -13,6 +13,7 @@ void main(void)
 {
 	uart_init(MYUBBR);
 	sram_init();
-	sram_test();
+	ADC_test();
+	// sram_test();
 	// chip_select_test();
 }

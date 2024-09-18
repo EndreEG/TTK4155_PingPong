@@ -1,5 +1,5 @@
 #pragma once
-#include <stdlib.h>
+#include "avr/io.h"
 
 typedef enum {
     LEFT,
