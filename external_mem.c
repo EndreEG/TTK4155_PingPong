@@ -7,7 +7,13 @@ void sram_init() {
 }
 
 void adc_init(){
-    DDRD |= (1<<PD5);
+    DDRD |= (1 << DDD4); // Setter PD5 som output for ekstern klokke
+    TCCR3A |= (0 << COM3A0) | (1 << COM3A1) | (1 << WGM31) | (1 << WGM30);
+    TCCR3B |= (0 << ICES3) | (1 << WGM32) | (1 << CS30); // Setter CTC som Timer/Counter mode of operation
+    OCR3B = 0;
+    //TCCR3B |= (1 << CS30); // Setter clock prescaler til 1/ Ingen prescaling
+    //TCCR3A |= (1 << COM3A1); // Setter COM1A0 til 1
+    //OCR3B = 0;
 }
 
 uint8_t read_adc(uint8_t channel, uint8_t address) {
@@ -19,20 +25,28 @@ uint8_t read_adc(uint8_t channel, uint8_t address) {
 int8_t calibration() {
     volatile char *ADC = (char *) ADC_START_ADDRESS;
     uint8_t calibration_index = 0;
-    int16_t calibration_sum = 0;
+    uint16_t calibration_sum = 0;
     while(calibration_index < 10) {
-        ADC[calibration_index] = 0x0;
+        ADC[0] = 0;
         _delay_us(100);
         // printf("Current sum %d, current index %d\n\r", calibration_sum, calibration_index);
-        int16_t adc_value = ADC[calibration_index];
+        uint8_t adc_value = ADC[0];
         calibration_sum = calibration_sum + adc_value;
         printf("ADC value %d, calibration sum %d\n\r", adc_value, calibration_sum);
         calibration_index++;
     }
-    int8_t position_offset = calibration_sum / 10;
+    uint8_t position_offset = calibration_sum / 10;
     printf("Offset: %d\n\r", position_offset);
     return position_offset;
         // printf("Position offset after %d\n\r", position_offset);
+}
+
+uint8_t map_slider_output(uint8_t slider_value) {
+    uint8_t new_min = 0;
+    uint8_t new_max = 100;
+    uint8_t old_min = 5;
+    uint8_t old_max = 255;
+    return (new_max - new_min) * (slider_value - old_min) / (old_max - old_min) + new_min;
 }
 
 void chip_select_test(void)
@@ -53,20 +67,30 @@ void chip_select_test(void)
 void ADC_test(void) {
     printf("ADC test start\n\r");
     volatile char *ADC = (char *) ADC_START_ADDRESS;
-    int32_t index = 0;
-    int32_t position_offset = calibration();
-    printf("Pos offset: %d\n\r", position_offset);
-    int16_t adc_value = 0x0;
+    // int32_t position_offset = calibration();
+    // printf("Pos offset: %d\n\r", position_offset);
+    // int16_t adc_value;
     while(1) {
-        // printf("First iteration sum: %d, offset: %d\n\r", calibration_sum, position_offset);
-        ADC[index] = 0x0;
-        _delay_us(20);
-        adc_value = ADC[index];
-        printf("Index %d: %d\n\r", index, adc_value);
-        //printf("Index 1: %d\n\r", ADC[1]);
-        printf("\n\r");
+        ADC[0] = 0;
+        ADC[1] = 1;
+        ADC[2] = 2;
+        ADC[3] = 3;
+        _delay_ms(10);
+        uint8_t adc_x_value = ADC[0];
+        uint8_t adc_y_value = ADC[1];
+        uint8_t slider_left = ADC[2];
+        uint8_t slider_right = ADC[3];
+        uint8_t scaled_adc_x_value = (adc_x_value * 100) / 255;
+        uint8_t scaled_adc_y_value = (adc_y_value * 100) / 255;
+        slider_left = map_slider_output(slider_left);
+        slider_right = map_slider_output(slider_right);
+        // uint8_t scaled_slider_left = (slider_left * 100) / 255;
+        // uint8_t scaled_slider_right = (slider_right * 100) / 255;
+        // int16_t raw_adc = adc_value;
+        // adc_value -= position_offset;
+        printf("ADC value: (%d, %d),   (%d, %d), raw ADC: ", scaled_adc_x_value, scaled_adc_y_value, slider_left, slider_right );
+        printf("\n\r"); 
         _delay_ms(200);
-        index++;
     }
 }
 
