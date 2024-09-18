@@ -6,12 +6,13 @@
  */ 
 #include "uart.h"
 #include "external_mem.h"
-// #include "sram_test.h"
+#include "sram_test.h"
 
 
 void main(void)
 {
 	uart_init(MYUBBR);
 	sram_init();
-	SRAM_test();
+	sram_test();
+	// chip_select_test();
 }

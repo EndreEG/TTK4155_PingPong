@@ -1,33 +1,21 @@
 #include "external_mem.h"
 
 void sram_init() {
-    MCUCR |= (1 << SRE); // Enable external memory on the MCU,
-    SFIOR &= ~((111<<XMM0)); // Release JTAG ports from address bus (s. 32 ATMega162 datasheet)
-    SFIOR |= (1<<XMM2);
-
-    // DDRE = (1 << DDE1);
+    MCUCR |= (1 << SRE); // Enable external memory on the MCU
+    SFIOR &= ~((111<<XMM0)); // Release JTAG ports from address bus (s. 32 ATMega162 datasheet), ensure that the XMM-pins are initialised to zero.
+    SFIOR |= (1<<XMM2); // Release pin 4-7 for the JTAG
 }
 
-void SRAM_test(void)
+void chip_select_test(void)
     {
         printf("Starter programmet\n\r");
-        volatile char *SRAM = (char *) 0x1800;
-        volatile char *ADC = (char *) 0x1400;
+        volatile char *SRAM = (char *) SRAM_START_ADDRESS; // SRAM sitt adresserom
+        volatile char *ADC = (char *) ADC_START_ADDRESS; // ADC-en sitt adresserom
         while(1) {
-            /*uint16_t i = 0;
-            while (i < 100000)
-            {
-                i++;
-            }
-            i = 0; */
-            SRAM[0] = 15;
+            SRAM[0] = 15; // Tester chip select signalet ved å sette adresse 0x1800 høy
             printf("Sram høy nå\n\r");
-            _delay_ms(1000);
-            /* while (i < 100000) {
-                i++;
-            }  
-            i = 0;  */     
-            ADC[0] = 15;        
+            _delay_ms(1000);   
+            ADC[0] = 15; // Tester chip select ved å sette ADC-en (adresse 0x1400 i dette tilfellet) høy, og da skal SRAM gå lav
             printf("ADC høy nå\n\r");
             _delay_ms(1000);
         }
