@@ -1,10 +1,4 @@
-#include "external_mem.h"
-
-void sram_init() {
-    MCUCR |= (1 << SRE); // Enable external memory on the MCU
-    SFIOR &= ~((111<<XMM0)); // Release JTAG ports from address bus (s. 32 ATMega162 datasheet), ensure that the XMM-pins are initialised to zero.
-    SFIOR |= (1<<XMM2); // Release pin 4-7 for the JTAG
-}
+#include "adc.h"
 
 void adc_init(){
     set_bit(DDRD, DDD5); // Setter PD5 som output for ekstern klokke
@@ -34,48 +28,6 @@ uint8_t read_adc(uint8_t channel, uint8_t address) {
     volatile char *ADC = (char *) ADC_START_ADDRESS;
     ADC[channel] = address;
     return ADC[channel];
-}
-
-int8_t calibration() {
-    volatile char *ADC = (char *) ADC_START_ADDRESS;
-    uint8_t calibration_index = 0;
-    uint16_t calibration_sum = 0;
-    while(calibration_index < 10) {
-        ADC[0] = 0;
-        _delay_us(100);
-        // printf("Current sum %d, current index %d\n\r", calibration_sum, calibration_index);
-        uint8_t adc_value = ADC[0];
-        calibration_sum = calibration_sum + adc_value;
-        printf("ADC value %d, calibration sum %d\n\r", adc_value, calibration_sum);
-        calibration_index++;
-    }
-    uint8_t position_offset = calibration_sum / 10;
-    printf("Offset: %d\n\r", position_offset);
-    return position_offset;
-        // printf("Position offset after %d\n\r", position_offset);
-}
-
-uint8_t map_slider_output(uint8_t slider_value) {
-    uint8_t new_min = 0;
-    uint8_t new_max = 100;
-    uint8_t old_min = 5;
-    uint8_t old_max = 255;
-    return (new_max - new_min) * (slider_value - old_min) / (old_max - old_min) + new_min;
-}
-
-void chip_select_test(void)
-    {
-        printf("Starter programmet\n\r");
-        volatile char *SRAM = (char *) SRAM_START_ADDRESS; // SRAM sitt adresserom
-        volatile char *ADC = (char *) ADC_START_ADDRESS; // ADC-en sitt adresserom
-        while(1) {
-            SRAM[0] = 15; // Tester chip select signalet ved å sette adresse 0x1800 høy
-            printf("Sram høy nå\n\r");
-            _delay_ms(1000);   
-            ADC[0] = 15; // Tester chip select ved å sette ADC-en (adresse 0x1400 i dette tilfellet) høy, og da skal SRAM gå lav
-            printf("ADC høy nå\n\r");
-            _delay_ms(1000);
-        }
 }
 
 void adc_test(void) {
@@ -139,13 +91,29 @@ uint8_t adc_read_channel(uint8_t channel) {
     return ADC[channel];
 }
 
-void write_sram(uint16_t address, uint8_t data) {
-    volatile char *ext_ram = ( char * ) SRAM_START_ADDRESS;
-    ext_ram[address] = data;  
+int8_t calibration() {
+    volatile char *ADC = (char *) ADC_START_ADDRESS;
+    uint8_t calibration_index = 0;
+    uint16_t calibration_sum = 0;
+    while(calibration_index < 10) {
+        ADC[0] = 0;
+        _delay_us(100);
+        // printf("Current sum %d, current index %d\n\r", calibration_sum, calibration_index);
+        uint8_t adc_value = ADC[0];
+        calibration_sum = calibration_sum + adc_value;
+        printf("ADC value %d, calibration sum %d\n\r", adc_value, calibration_sum);
+        calibration_index++;
+    }
+    uint8_t position_offset = calibration_sum / 10;
+    printf("Offset: %d\n\r", position_offset);
+    return position_offset;
+        // printf("Position offset after %d\n\r", position_offset);
 }
 
-uint8_t read_sram(uint16_t address) {
-    volatile char *ext_ram = ( char * ) SRAM_START_ADDRESS;
-    // printf(ext_ram[address]);
-    return ext_ram[address];
+uint8_t map_slider_output(uint8_t slider_value) {
+    uint8_t new_min = 0;
+    uint8_t new_max = 100;
+    uint8_t old_min = 5;
+    uint8_t old_max = 255;
+    return (new_max - new_min) * (slider_value - old_min) / (old_max - old_min) + new_min;
 }

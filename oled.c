@@ -40,7 +40,6 @@ void oled_clear() {
 void print_character(uint8_t character) {
     uint8_t* character_array = (uint8_t*) malloc(8); 
     extract_font(character_array, character);
-    oled_pos(3, 64);
     for (int i = 0; i < 8; i++) {
         oled_write_data(character_array[i]);
     }
@@ -48,10 +47,21 @@ void print_character(uint8_t character) {
     character_array = NULL;
 }
 
+void print_string(char* string) {
+    int i = 0;
+    uint8_t start_page = 3;
+    uint8_t start_col = 0;
+    while (string[i] != '\0') {
+        oled_pos(start_page, start_col + 8*i);
+        print_character(string[i]);
+        i++;
+    }
+}
+
 void extract_font(uint8_t *character_array, uint8_t character) {
     // uint8_t character[8];
     for (int i = 0; i < 8; i++) {
-        character_array[i] = pgm_read_byte(&(font8[character][i]));
+        character_array[i] = pgm_read_byte(&(font8[get_font8_index(character)][i]));
     }
 }
 

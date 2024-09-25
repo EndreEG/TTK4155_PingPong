@@ -6,13 +6,10 @@
  */ 
 
 #pragma once
-#include <stdio.h>
+#include "utilities.h"
 //#include <xc.h>
-#include "avr/io.h"
 
-#define FOSC 4915200 // Crystal oscillator frequency
-#define BAUDRATE 9600
-#define MYUBBR FOSC/16/BAUDRATE - 1
+
 //#define F_CPU 16000000
 //#include "util/delay.h"
 
