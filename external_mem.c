@@ -7,13 +7,27 @@ void sram_init() {
 }
 
 void adc_init(){
-    DDRD |= (1 << DDD4); // Setter PD5 som output for ekstern klokke
-    TCCR3A |= (0 << COM3A0) | (1 << COM3A1) | (1 << WGM31) | (1 << WGM30);
-    TCCR3B |= (0 << ICES3) | (1 << WGM32) | (1 << CS30); // Setter CTC som Timer/Counter mode of operation
-    OCR3B = 0;
-    //TCCR3B |= (1 << CS30); // Setter clock prescaler til 1/ Ingen prescaling
-    //TCCR3A |= (1 << COM3A1); // Setter COM1A0 til 1
-    //OCR3B = 0;
+    set_bit(DDRD, DDD5); // Setter PD5 som output for ekstern klokke
+    clear_bit(DDRD, DDD4); // Setter PD4 som input for ADC
+
+	//set fast PWM mode, choose ICR1 as TOP
+	set_bit(TCCR1B,WGM13);
+	set_bit(TCCR1B,WGM12);
+	set_bit(TCCR1A,WGM11);
+	clear_bit(TCCR1A,WGM10);
+	// clear on compare match, set on TOP reached
+	set_bit(TCCR1A,COM1A1);
+	clear_bit(TCCR1A,COM1A0);
+
+	// sets I/O clock as frequency, with no prescaler
+	set_bit(TCCR1B,CS10);
+	clear_bit(TCCR1B,CS11);
+	clear_bit(TCCR1B,CS12);
+    OCR1A = 1;
+    ICR1 = 3;
+
+    clear_bit(DDRB, DDB0);
+    clear_bit(DDRB, DDB1);
 }
 
 uint8_t read_adc(uint8_t channel, uint8_t address) {
@@ -64,7 +78,7 @@ void chip_select_test(void)
         }
 }
 
-void ADC_test(void) {
+void adc_test(void) {
     printf("ADC test start\n\r");
     volatile char *ADC = (char *) ADC_START_ADDRESS;
     // int32_t position_offset = calibration();
@@ -80,6 +94,8 @@ void ADC_test(void) {
         uint8_t adc_y_value = ADC[1];
         uint8_t slider_left = ADC[2];
         uint8_t slider_right = ADC[3];
+        uint8_t button_left = test_bit(PINB, PINB1);
+        uint8_t button_right = test_bit(PINB, PINB0);
         uint8_t scaled_adc_x_value = (adc_x_value * 100) / 255;
         uint8_t scaled_adc_y_value = (adc_y_value * 100) / 255;
         slider_left = map_slider_output(slider_left);
@@ -88,19 +104,48 @@ void ADC_test(void) {
         // uint8_t scaled_slider_right = (slider_right * 100) / 255;
         // int16_t raw_adc = adc_value;
         // adc_value -= position_offset;
-        printf("ADC value: (%d, %d),   (%d, %d), raw ADC: ", scaled_adc_x_value, scaled_adc_y_value, slider_left, slider_right );
+        printf("ADC value: (%d, %d),   (%d, %d), raw ADC: (%d, %d), Buttons: (%d, %d)", scaled_adc_x_value, scaled_adc_y_value, slider_left, slider_right, adc_x_value, adc_y_value, button_left, button_right);
         printf("\n\r"); 
         _delay_ms(200);
     }
 }
 
+uint8_t adc_read_channel(uint8_t channel) {
+    volatile char *ADC = (char *) ADC_START_ADDRESS;
+    if (channel == 0) {
+        ADC[0] = 0;
+        printf("Joystick x-value\n\r");
+        uint8_t value = ADC[0];
+        return value;
+    }
+    else if (channel == 1) {
+        ADC[1] = 1;
+        printf("Joystick y-value\n\r");
+        uint8_t value = ADC[1];
+        return value;
+    }
+    else if (channel == 2) {
+        ADC[2] = 2;
+        printf("Slider left\n\r");
+        uint8_t value = ADC[2];
+        return ADC[2];
+    }
+    else if (channel == 3) {
+        ADC[3] = 3;
+        printf("Slider right\n\r");
+        uint8_t value = ADC[3];
+        return value;
+    }
+    return ADC[channel];
+}
+
 void write_sram(uint16_t address, uint8_t data) {
-    volatile char *ext_ram = ( char * ) OLED_START_ADDRESS;
+    volatile char *ext_ram = ( char * ) SRAM_START_ADDRESS;
     ext_ram[address] = data;  
 }
 
 uint8_t read_sram(uint16_t address) {
-    volatile char *ext_ram = ( char * ) OLED_START_ADDRESS;
+    volatile char *ext_ram = ( char * ) SRAM_START_ADDRESS;
     // printf(ext_ram[address]);
     return ext_ram[address];
 }
