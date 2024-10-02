@@ -8,6 +8,10 @@
 #include "adc.h"
 #include "sram.h"
 #include "oled.h"
+#include "menus.h"
+#include "spi.h"
+#include "mcp.h"
+#include "can.h"
 
 
 void main(void)
@@ -17,12 +21,15 @@ void main(void)
 	adc_init();
 	xmem_init();
 	oled_init();
+	spi_init();
 	oled_clear();
-	state current_state = MAIN_MENU;
-	while (1)
-	{
-		current_state = state_machine(current_state);
-	}
+	// mcp_write(0x00, 'c');
+	// printf("%d", mcp_read(0x00));
+	// state current_state = MAIN_MENU;
+	// while (1)
+	// {
+	// 	current_state = state_machine(current_state);
+	// }
 	
 	
 	// print_string("Hello World!");

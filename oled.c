@@ -43,21 +43,29 @@ void oled_clear() {
     }    
 }
 
-void print_character(uint8_t character) {
+void print_character(uint8_t character, uint8_t inverted) {
     uint8_t* character_array = (uint8_t*) malloc(8); 
     extract_font(character_array, character);
     for (int i = 0; i < 8; i++) {
-        oled_write_data(character_array[i]);
+        if (inverted) {
+            oled_write_data(~character_array[i]);
+        } else {
+            oled_write_data(character_array[i]);
+        }
     }
     free(character_array);
     character_array = NULL;
 }
 
-void print_string(char* string, uint8_t start_page, uint8_t start_col) {
+void print_string(char* string, uint8_t start_page, uint8_t start_col, uint8_t inverted) {
     int i = 0;
     while (string[i] != '\0') {
         oled_pos(start_page, start_col + 8*i);
-        print_character(string[i]);
+        if (inverted) {
+            print_character(string[i], inverted);
+        } else {
+            print_character(string[i], inverted);
+        }
         i++;
     }
 }
@@ -120,96 +128,12 @@ void oled_pos(uint8_t page, uint8_t col) {
     oled_goto_column(col);
 }
 
-void menu() {
-    oled_clear();
-    print_string("Menu", 0, 48);
-    print_string("", 1, 0);
-    print_string("1.Play", 2, ARROW_SPACE);
-    print_string("2.Highscore", 3, ARROW_SPACE);
-    print_string("3.Settings", 4, ARROW_SPACE);
-    print_string("4.Exit", 5, ARROW_SPACE);
-}
-
-state main_menu(){
-    menu();
-	uint8_t current_arrow_pos = 2;
-	uint8_t previous_arrow_pos = 2;
-	joystick_direction direction = NEUTRAL;
-	uint8_t *adc_readings = (uint8_t *) malloc(4);
-	oled_print_arrow(current_arrow_pos, 0);
-	while (1)
-	{
-		adc_read(adc_readings);
-		direction = get_joystick_direction(adc_readings[0], adc_readings[1]);
-		current_arrow_pos = move_arrow(current_arrow_pos, direction);
-		printf("Current arrow pos: %d Previous arrow pos: %d Direction: %d\n\r", current_arrow_pos, previous_arrow_pos, direction);
-		if (current_arrow_pos != previous_arrow_pos) {
-			previous_arrow_pos = current_arrow_pos;
-			_delay_ms(200);
-		}
-        if (get_joystick_button_pressed()) {
-            return current_arrow_pos;
-            break;
-        }
-	}
-	free(adc_readings);
-	adc_readings = NULL;
-}
-
-state play(){
-    printf("Play\n\r");
-    return MAIN_MENU;
-}
-
-state highscore(){
-    printf("Highscore\n\r");
-    return MAIN_MENU;
-}
-
-state settings(){
-    printf("Settings\n\r");
-    return MAIN_MENU;
-}
-
-state quit(){
-    printf("Quit\n\r");
-    return MAIN_MENU;
-}
-
-uint8_t get_joystick_button_pressed(){
-    return !test_bit(PINB, PB7);
-}
-
-state state_machine(state current_state) {
-    switch (current_state)
-    {
-    case MAIN_MENU:
-        current_state = main_menu();
-        break;
-    case PLAY:
-        current_state = play();
-        break;
-    case HIGHSCORE:
-        current_state = highscore();
-        break;
-    case SETTINGS:
-        current_state = settings();
-        break;
-    case EXIT:
-        current_state = quit();
-        break;
-    default:
-        current_state = MAIN_MENU;
-        break;
-    }
-    return current_state;
-}
-
 uint8_t move_arrow(uint8_t arrow_pos, int8_t direction) {
     if (direction == NEUTRAL || direction == RIGHT || direction == LEFT) {
         return arrow_pos;
     }
     clear_arrow(arrow_pos);
+    invert_menu_item(arrow_pos, 0); // Uninvert the previous menu item
     if (direction == UP) {
         if(arrow_pos - 1 < START_POS_MENU){
             arrow_pos = END_POS_MENU;
@@ -222,6 +146,8 @@ uint8_t move_arrow(uint8_t arrow_pos, int8_t direction) {
         }
         else arrow_pos++;
     }
+
+    invert_menu_item(arrow_pos, 1); // inverted the current menu item
     oled_print_arrow(arrow_pos, 0);
     printf("Arrow pos: %d, Direction: %d\n\r", arrow_pos, direction);
     return arrow_pos;
