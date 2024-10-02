@@ -18,25 +18,12 @@ void main(void)
 	xmem_init();
 	oled_init();
 	oled_clear();
-	menu();
-	uint8_t current_arrow_pos = 2;
-	uint8_t previous_arrow_pos = 2;
-	uint8_t *adc_readings = (uint8_t *) malloc(4);
-	joystick_direction direction = NEUTRAL;
-	oled_print_arrow(current_arrow_pos, 0);
+	state current_state = MAIN_MENU;
 	while (1)
 	{
-		adc_read(adc_readings);
-		direction = get_joystick_direction(adc_readings[0], adc_readings[1]);
-		current_arrow_pos = move_arrow(current_arrow_pos, direction);
-		printf("Current arrow pos: %d Previous arrow pos: %d Direction: %d\n\r", current_arrow_pos, previous_arrow_pos, direction);
-		if (current_arrow_pos != previous_arrow_pos) {
-			previous_arrow_pos = current_arrow_pos;
-			_delay_ms(200);
-		}
+		current_state = state_machine(current_state);
 	}
-	free(adc_readings);
-	adc_readings = NULL;
+	
 	
 	// print_string("Hello World!");
 	// adc_test();

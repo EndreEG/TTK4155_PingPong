@@ -2,7 +2,9 @@
 
 void adc_init(){
     set_bit(DDRD, DDD5); // Setter PD5 som output for ekstern klokke
-    clear_bit(DDRD, DDD4); // Setter PD4 som input for ADC
+    clear_bit(DDRD, DDD4); // Setter PD4 som input for busy signal
+    clear_bit(DDRB, DDB7); // Setter PB7 som input joystick button pressed
+    set_bit(PORTB, PORTB7); // Setter pull-up resistor på PB7
 
 	//set fast PWM mode, choose ICR1 as TOP
 	set_bit(TCCR1B,WGM13);
