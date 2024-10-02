@@ -5,8 +5,8 @@
  *  Author: endreeg
  */ 
 #include "uart.h"
+#include "adc.h"
 #include "sram.h"
-#include "sram_test.h"
 #include "oled.h"
 
 
@@ -18,8 +18,12 @@ void main(void)
 	xmem_init();
 	oled_init();
 	oled_clear();
-	print_string("Hello World!");
+	menu();
+
+	
+	// print_string("Hello World!");
 	// adc_test();
+
 	// sram_test();
 	// chip_select_test();
 	// while(1) {

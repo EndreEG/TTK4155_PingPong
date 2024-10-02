@@ -26,13 +26,19 @@ void oled_init()
     oled_write_command(0xaf); // display on
 }
 
+void oled_clear_line(uint8_t page) {
+    for (int col = 0; col < 128; col++) {
+        oled_pos(page, col);
+        oled_write_data(0b00000000);
+    }
+}
+
 void oled_clear() {
     for (int page = 0; page < 8; page++) {
         for (int col = 0; col < 128; col++) {
             oled_pos(page, col);
             oled_write_data(0b00000000);
             // oled_write_data(0b11111111);
-            _delay_ms(1);
         }
     }    
 }
@@ -47,16 +53,16 @@ void print_character(uint8_t character) {
     character_array = NULL;
 }
 
-void print_string(char* string) {
+void print_string(char* string, uint8_t start_page, uint8_t start_col) {
     int i = 0;
-    uint8_t start_page = 3;
-    uint8_t start_col = 0;
     while (string[i] != '\0') {
         oled_pos(start_page, start_col + 8*i);
         print_character(string[i]);
         i++;
     }
 }
+
+
 
 void extract_font(uint8_t *character_array, uint8_t character) {
     // uint8_t character[8];
@@ -112,4 +118,44 @@ void oled_pos(uint8_t page, uint8_t col) {
     //printf("Page: %d, Col: %d\n\r", page, col);
     oled_goto_page(page);
     oled_goto_column(col);
+}
+
+void menu() {
+    oled_clear();
+    print_string("Menu", 0, 48);
+    print_string("", 1, 0);
+    print_string("1.Play", 2, ARROW_SPACE);
+    print_string("2.Highscore", 3, ARROW_SPACE);
+    print_string("3.Settings", 4, ARROW_SPACE);
+    print_string("4.Exit", 5, ARROW_SPACE);
+}
+
+uint8_t move_arrow(uint8_t arrow_pos, int8_t direction) {
+    if (direction == NEUTRAL || direction == RIGHT || direction == LEFT) {
+        return arrow_pos;
+    }
+    clear_arrow(arrow_pos);
+    if (direction == UP) {
+        if(arrow_pos - 1 < START_POS_MENU){
+            arrow_pos = END_POS_MENU;
+        }
+        else arrow_pos--;
+    }
+    else if (direction == DOWN) {
+        if(arrow_pos + 1 > END_POS_MENU){
+            arrow_pos = START_POS_MENU;
+        }
+        else arrow_pos++;
+    }
+    oled_print_arrow(arrow_pos, 0);
+    printf("Arrow pos: %d, Direction: %d\n\r", arrow_pos, direction);
+    return arrow_pos;
+}
+
+void clear_arrow(uint8_t arrow_pos) {
+    for (int col = 0; col < 8; col++)
+    {
+        oled_pos(arrow_pos, col);
+        oled_write_data(0b00000000);
+    }
 }

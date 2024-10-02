@@ -24,71 +24,26 @@ void adc_init(){
     clear_bit(DDRB, DDB1);
 }
 
-uint8_t read_adc(uint8_t channel, uint8_t address) {
-    volatile char *ADC = (char *) ADC_START_ADDRESS;
-    ADC[channel] = address;
-    return ADC[channel];
-}
-
 void adc_test(void) {
     printf("ADC test start\n\r");
-    volatile char *ADC = (char *) ADC_START_ADDRESS;
-    // int32_t position_offset = calibration();
-    // printf("Pos offset: %d\n\r", position_offset);
-    // int16_t adc_value;
+    uint8_t* adc_readings = (uint8_t*) malloc(4);
     while(1) {
-        ADC[0] = 0;
-        ADC[1] = 1;
-        ADC[2] = 2;
-        ADC[3] = 3;
-        _delay_ms(10);
-        uint8_t adc_x_value = ADC[0];
-        uint8_t adc_y_value = ADC[1];
-        uint8_t slider_left = ADC[2];
-        uint8_t slider_right = ADC[3];
-        uint8_t button_left = test_bit(PINB, PINB1);
-        uint8_t button_right = test_bit(PINB, PINB0);
-        uint8_t scaled_adc_x_value = (adc_x_value * 100) / 255;
-        uint8_t scaled_adc_y_value = (adc_y_value * 100) / 255;
-        slider_left = map_slider_output(slider_left);
-        slider_right = map_slider_output(slider_right);
-        // uint8_t scaled_slider_left = (slider_left * 100) / 255;
-        // uint8_t scaled_slider_right = (slider_right * 100) / 255;
-        // int16_t raw_adc = adc_value;
-        // adc_value -= position_offset;
-        printf("ADC value: (%d, %d),   (%d, %d), raw ADC: (%d, %d), Buttons: (%d, %d)", scaled_adc_x_value, scaled_adc_y_value, slider_left, slider_right, adc_x_value, adc_y_value, button_left, button_right);
-        printf("\n\r"); 
-        _delay_ms(200);
+        adc_read(adc_readings);
+        printf("ADC values: (%d, %d), (%d, %d)\n\r", adc_readings[0], adc_readings[1], adc_readings[2], adc_readings[3]);
     }
+    free(adc_readings);
+    adc_readings = NULL;
 }
 
-uint8_t adc_read_channel(uint8_t channel) {
+void adc_read(uint8_t* adc_readings) {
     volatile char *ADC = (char *) ADC_START_ADDRESS;
-    if (channel == 0) {
-        ADC[0] = 0;
-        printf("Joystick x-value\n\r");
-        uint8_t value = ADC[0];
-        return value;
-    }
-    else if (channel == 1) {
-        ADC[1] = 1;
-        printf("Joystick y-value\n\r");
-        uint8_t value = ADC[1];
-        return value;
-    }
-    else if (channel == 2) {
-        ADC[2] = 2;
-        printf("Slider left\n\r");
-        uint8_t value = ADC[2];
-        return ADC[2];
-    }
-    else if (channel == 3) {
-        ADC[3] = 3;
-        printf("Slider right\n\r");
-        uint8_t value = ADC[3];
-        return value;
-    }
-    return ADC[channel];
+    ADC[0] = 0;
+    _delay_us(1);
+    loop_until_bit_is_set(PIND, PIND4);
+    adc_readings[1] = ADC[0];
+    adc_readings[0] = ADC[1];
+    adc_readings[2] = ADC[2];
+    adc_readings[3] = ADC[3];
 }
 
 int8_t calibration() {

@@ -1,21 +1,19 @@
 #include "joystick.h"
 
 
-/* joystick_direction get_joystick_direction(uint8_t x, uint8_t y) {
-    int threshold = 512; // Example threshold value for neutral position
-
-    if (pos.x < threshold - 100) {
+joystick_direction get_joystick_direction(uint8_t x, uint8_t y) {
+    if (x < 130) {
         return LEFT;
-    } else if (pos.x > threshold + 100) {
+    } else if (x > 190) {
         return RIGHT;
-    } else if (pos.y < threshold - 100) {
+    } else if (y < 130) {
         return DOWN;
-    } else if (pos.y > threshold + 100) {
+    } else if (y > 190) {
         return UP;
     } else {
         return NEUTRAL;
     }
-} */
+}
 
 uint8_t joystick_position_calibration() {
     joystick_position pos;
