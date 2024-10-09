@@ -23,16 +23,30 @@ void main(void)
 	oled_init();
 
 	// spi_init();
+	uint8_t mcp_init_status = mcp_init();
+	if (mcp_init_status) {
+		printf("MCP2515 initialization failed\n\r");
+	}
+	else {
+		printf("MCP2515 initialized successfully\n\r");
+	}
+	printf("Entering loop\n\r");
+	// while (1)
+	// {
+	mcp_write(0b00110110, 170);
+	uint8_t value = mcp_read(0b00110110);
+	printf("Value: %d\n\r", value);
+	// }
 	// oled_clear();
 	// adc_test();
 	// mcp_write(0x00, 'c');
 	// printf("%d", mcp_read(0x00));
-	menu_init();
-	state current_state = MAIN_MENU;
-	while (1)
-	{
-		current_state = state_machine(current_state);
-	}
+	// menu_init();
+	// state current_state = MAIN_MENU;
+	// while (1)
+	// {
+	// 	current_state = state_machine(current_state);
+	// }
 	
 	
 	// print_string("Hello World!", 3, 30, 0);

@@ -3,58 +3,52 @@
 void spi_init(){
     set_bit(DDRB, DDB5); // Set MOSI output on PB5
     set_bit(DDRB, DDB7); // Set SCK output PB7
+
     clear_bit(DDRB, DDB6); // Set MISO input on PB6
     set_bit(DDRB, DDB4); // Set SS output on PB4
+    set_bit(PORTB, PB4); // Set SS high to disable slave during initialization
+
     // Enable SPI, Master, set clock rate fck/16
-    set_bit(SPCR, SPE);
-    set_bit(SPCR, MSTR);
-    set_bit(SPCR, SPR0);
+    set_bit(SPCR, SPE); // Enable SPI
+    set_bit(SPCR, MSTR); // Set as master
+    set_bit(SPCR, SPR0); // Set clock rate fck/16
+
+    // Set SPI mode to 0
+    clear_bit(SPCR, CPOL); // Set clock polarity to 0
+    clear_bit(SPCR, CPHA); // Set clock phase to 0
+    
+    // set_bit(SPCR, SPIE); // Enable SPI interrupt
 }
 
 uint8_t spi_transceive(uint8_t data){
     // Start transmission
     SPDR = data;
+    // printf("SPDR set to: %d\n\r", data);
+    // _delay_ms(100);
+
     // Wait for transmission complete
+    while(!(SPSR & (1<<SPIF))) {
+        // printf("Waiting for SPIF...\n\r");
+        // _delay_ms(100);
+    }
+
+    uint8_t result = SPDR;
+    // printf("Received data: %d\n\r", data);
+    // _delay_ms(100);
+    return result;
+}
+
+uint8_t spi_read() 
+{
+    spi_write(0x00);
     while(!(SPSR & (1<<SPIF)));
 
-    data = SPDR;
-    return data;
+    uint8_t result = SPDR;
+    return result;
 }
 
-uint8_t mcp_read(uint8_t address){
-    clear_bit(PORTB, PB4);
-    spi_transceive(MCP_READ);
-    spi_transceive(address);
-    uint8_t data = spi_transceive(0x00);
-    set_bit(PORTB, PB4);
-    return data;
+void spi_write(uint8_t data) 
+{
+    SPDR = data;
+    while(!(SPSR & (1<<SPIF)));
 }
-
-void mcp_write(uint8_t address, uint8_t data){
-    clear_bit(PORTB, PB4);
-    spi_transceive(MCP_WRITE);
-    spi_transceive(address);
-    spi_transceive(data);
-    set_bit(PORTB, PB4);
-}
-
-void mcp_rts(uint8_t instruction) {
-    clear_bit(PORTB, PB4);
-    spi_transceive(instruction);
-    set_bit(PORTB, PB4);
-}
-
-uint8_t mcp_read_status() {
-    clear_bit(PORTB, PB4);
-    spi_transceive(MCP_READ_STATUS);
-    uint8_t can_status = spi_transceive(0x00);
-    set_bit(PORTB, PB4);
-    return can_status;
-}
-
-// char spi_receive(){
-//     // Wait for reception complete
-//     while(!(SPSR & (1<<SPIF)));
-//     // Return Data Register
-//     return SPDR;
-// }
