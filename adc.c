@@ -32,6 +32,7 @@ void adc_test(void) {
     while(1) {
         adc_read(adc_readings);
         printf("ADC values: (%d, %d), (%d, %d)\n\r", adc_readings[0], adc_readings[1], adc_readings[2], adc_readings[3]);
+        _delay_ms(100);
     }
     free(adc_readings);
     adc_readings = NULL;
