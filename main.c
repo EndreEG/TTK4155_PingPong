@@ -21,16 +21,23 @@ void main(void)
 	adc_init();
 	xmem_init();
 	oled_init();
-
+	can_init();
+	printf("Mode: %x\n\r", mcp_read(MCP_CANSTAT));
+	can_message* message;
+	message->data[0] = "HELLO";
+	message->id = 0x123;
+	message->length = 8;
+	can_transmit(message);
+	can_message received_message = can_receive();
+	printf("Received message: %s\n\r", received_message.data);
 	// spi_init();
-	uint8_t mcp_init_status = mcp_init();
-	while (1)
-	{
-		// mcp_write(54, 0b10101010);
-		// mcp_read(54);
-		mcp_read_status();
-		_delay_ms(300);
-	}
+	// uint8_t mcp_init_status = mcp_init();
+	// mcp_set_mode(MODE_LOOPBACK);
+	// mcp_write(MCP_CANCTRL, MODE_LOOPBACK);
+	// while (1)
+	// {
+	// 	uint8_t mcp_init_status = mcp_init();
+	// }
 	// while(1){
 	// 	mcp_write(54, 0b10101010);
 	// 	_delay_ms(100);

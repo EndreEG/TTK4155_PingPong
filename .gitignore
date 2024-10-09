@@ -15,6 +15,7 @@ Thumbs.db
 # Ignore compiled files
 *.o
 *.out
+*.hex
 *.class
 
 # Ignore Python cache files

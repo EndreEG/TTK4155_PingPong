@@ -1,9 +1,13 @@
 #include "mcp.h"
 
+// TODO: MCP2515 misbehaves. Needs punishment- I mean, debugging. 
+// TODO: MCP does not respond to SPI commands. MISO line is always low. MOSI seems to work fine. We can put bits in SPDR and they are transmitted.
+
 uint8_t mcp_init() {
     spi_init();
     // mcp_reset(); // Reset signal is physical button
     mcp_reset();
+    mcp_write(MCP_CANCTRL, MODE_CONFIG); // Set MCP2515 to configuration mode
     // Self-test
     _delay_ms(3);
     uint8_t value = mcp_read(MCP_CANSTAT);
@@ -53,4 +57,17 @@ uint8_t mcp_read_status() {
     uint8_t can_status = spi_transceive(0x00);
     set_ss_high();
     return can_status;
+}
+
+void mcp_bit_modify(uint8_t address, uint8_t mask, uint8_t data) {
+	set_ss_low();
+	spi_write(MCP_BIT_MODIFY); //Kommando for å endre en eller flere bit
+	spi_write(address); //Adressen der vi vil endre en eller flere bit
+	spi_write(mask); //Maskeringsbyte, se forklaring nedenfor
+	spi_write(data); //Verdiene som biten(e) skal endres til
+    set_ss_high();
+}
+
+void mcp_set_mode(uint8_t mode) {
+	mcp_bit_modify(MCP_CANCTRL, 0b11100000, mode);
 }
