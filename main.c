@@ -24,18 +24,33 @@ void main(void)
 
 	// spi_init();
 	uint8_t mcp_init_status = mcp_init();
-	if (mcp_init_status) {
-		printf("MCP2515 initialization failed\n\r");
+	while (1)
+	{
+		// mcp_write(54, 0b10101010);
+		// mcp_read(54);
+		mcp_read_status();
+		_delay_ms(300);
 	}
-	else {
-		printf("MCP2515 initialized successfully\n\r");
-	}
-	printf("Entering loop\n\r");
+	// while(1){
+	// 	mcp_write(54, 0b10101010);
+	// 	_delay_ms(100);
+	// 	uint8_t result = mcp_read(54);
+	// 	printf("Result: %d\n\r", result);
+	// 	_delay_ms(100);
+
+	// }
+	// if (mcp_init_status) {
+	// 	printf("MCP2515 initialization failed\n\r");
+	// }
+	// else {
+	// 	printf("MCP2515 initialized successfully\n\r");
+	// }
+	// printf("Entering loop\n\r");
 	// while (1)
 	// {
-	mcp_write(0b00110110, 170);
-	uint8_t value = mcp_read(0b00110110);
-	printf("Value: %d\n\r", value);
+	// mcp_write(0b00110110, 170);
+	// uint8_t value = mcp_read(0b00110110);
+	// printf("Value: %d\n\r", value);
 	// }
 	// oled_clear();
 	// adc_test();

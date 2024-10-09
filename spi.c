@@ -1,4 +1,12 @@
 #include "spi.h"
+void set_ss_low() {
+    clear_bit(PORTB, PB4);
+}
+
+void set_ss_high() {
+    set_bit(PORTB, PB4);
+}
+
 
 void spi_init(){
     set_bit(DDRB, DDB5); // Set MOSI output on PB5
@@ -6,7 +14,7 @@ void spi_init(){
 
     clear_bit(DDRB, DDB6); // Set MISO input on PB6
     set_bit(DDRB, DDB4); // Set SS output on PB4
-    set_bit(PORTB, PB4); // Set SS high to disable slave during initialization
+    set_ss_high(); // Set SS high to disable slave during initialization
 
     // Enable SPI, Master, set clock rate fck/16
     set_bit(SPCR, SPE); // Enable SPI
@@ -40,15 +48,20 @@ uint8_t spi_transceive(uint8_t data){
 
 uint8_t spi_read() 
 {
-    spi_write(0x00);
+    uint8_t dummy = 0xFF;
+    SPDR = dummy;
+    // printf("SPDR, dummy: %d, %d\n\r", SPDR, dummy);
     while(!(SPSR & (1<<SPIF)));
-
-    uint8_t result = SPDR;
-    return result;
+    // printf("SPDR: %d\n\r", SPDR);
+    return SPDR;
+    // uint8_t result = SPDR;
+    // printf("Result: %d\n\r", result);
+    // return result;
 }
 
 void spi_write(uint8_t data) 
 {
     SPDR = data;
+    // printf("SPDR set to: %d\n\r", SPDR);
     while(!(SPSR & (1<<SPIF)));
 }
