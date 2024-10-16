@@ -12,20 +12,32 @@
  * apt or your favorite package manager.
  */
 #include "uart.h"
+#include "time.h"
+#include "utilities.h"
 
 int main()
 {
     SystemInit();
 
-    WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
+    //Disable Watchdog Timer
+    WDT->WDT_MR = WDT_MR_WDDIS; 
 
-    //Uncomment after including uart above
-    //uart_init(/*cpufreq*/, /*baud*/);
-    //printf("Hello World\n\r");
+    uart_init(F_CPU, BAUDRATE);
+
+    // Enable the peripheral clock for PIOB
+    set_bit(PMC->PMC_PCER0, ID_PIOB);
+
+    // Configure PB13 as an output
+    PIOB->PIO_OER = PIO_PB13;
+
 
     while (1)
     {
-        /* code */
+        printf("Hello World\n\r");
+        PIOB->PIO_CODR = PIO_PB13;
+        time_spinFor(msecs(500));
+        PIOB->PIO_SODR = PIO_PB13;
+        time_spinFor(msecs(500));
     }
     
 }

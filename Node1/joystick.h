@@ -16,9 +16,9 @@ typedef enum {
     UP,
     DOWN,
     NEUTRAL
-} joystick_direction;
+} JoystickDirection;
 
 typedef struct {
     int x;
     int y;
-} joystick_position;
+} JoystickPosition;

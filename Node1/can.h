@@ -40,11 +40,11 @@ typedef struct {
     uint16_t id;
     uint8_t length;
     uint8_t data[8];
-} can_message;
+} CanMessage;
 
 
 void can_init();
-void can_transmit(can_message* message);
-void can_construct_message(can_message* message, uint16_t id, uint8_t* data);
-void can_print_message(can_message* message);
-can_message can_receive();
+void can_transmit(CanMessage* message);
+void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data);
+void can_print_message(CanMessage* message);
+CanMessage can_receive();

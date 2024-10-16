@@ -14,7 +14,7 @@ void can_init() {
     mcp_write(MCP_CANCTRL, MODE_LOOPBACK);
 }
 
-void can_transmit(can_message* message) {
+void can_transmit(CanMessage* message) {
     mcp_write(TXB0SIDH, message->id >> 8); // Standard identifier high
     mcp_write(TXB0SIDL, message->id & 0xFF); // Standard identifier low
     mcp_write(TXB0DLC, message->length);
@@ -25,7 +25,7 @@ void can_transmit(can_message* message) {
     printf("Transmitted message: %c\n\r", message->data[0]);
 }
 
-void can_construct_message(can_message* message, uint16_t id, uint8_t* data) {
+void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data) {
     message->id = id;
     message->length = MESSAGE_LENGTH;
     for (int i = 0; i < MESSAGE_LENGTH; i++) {
@@ -33,7 +33,7 @@ void can_construct_message(can_message* message, uint16_t id, uint8_t* data) {
     }
 }
 
-void can_print_message(can_message* message) {
+void can_print_message(CanMessage* message) {
     printf("ID: %x\n\r", message->id);
     uint8_t i = 0;
     while(message->data[i] != '\0'){
@@ -43,8 +43,8 @@ void can_print_message(can_message* message) {
     printf("\n\r");
 }
 
-can_message can_receive(){
-    can_message message;
+CanMessage can_receive(){
+    CanMessage message;
     message.id = mcp_read(RXB0SIDH) << 8;
     message.id |= mcp_read(RXB0SIDL);
     message.length = mcp_read(RXB0DLC) & 0x0F;

@@ -1,7 +1,7 @@
 #include "joystick.h"
 
 
-joystick_direction get_joystick_direction(uint8_t x, uint8_t y) {
+JoystickDirection get_joystick_direction(uint8_t x, uint8_t y) {
     if (x < 130) {
         return LEFT;
     } else if (x > 190) {
@@ -16,7 +16,7 @@ joystick_direction get_joystick_direction(uint8_t x, uint8_t y) {
 }
 
 uint8_t joystick_position_calibration() {
-    joystick_position pos;
+    JoystickPosition pos;
     uint32_t sum_x = 0;
     uint32_t sum_y = 0;
     uint16_t samples = 1000; // Number of samples for calibration

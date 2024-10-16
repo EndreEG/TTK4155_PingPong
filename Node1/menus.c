@@ -39,7 +39,7 @@ state main_menu(){
     menu();
 	uint8_t current_arrow_pos = 1; // 1 is an invalid position for the arrow,
 	uint8_t previous_arrow_pos = 2; // but is used to invert the first menu item
-	joystick_direction direction = NEUTRAL;
+	JoystickDirection direction = NEUTRAL;
 	uint8_t *adc_readings = (uint8_t *) malloc(4);
 	current_arrow_pos = move_arrow(current_arrow_pos, DOWN); // Move arrow down to initial position (first menu item/Play)
 	printf("Entering main menu\n\r");

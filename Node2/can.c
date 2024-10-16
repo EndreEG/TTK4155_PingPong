@@ -3,13 +3,13 @@
 #include "can.h"
 #include <stdio.h>
 
-void can_printmsg(CanMsg m){
-    printf("CanMsg(id:%d, length:%d, data:{", m.id, m.length);
-    if(m.length){
-        printf("%d", m.byte[0]);
+void can_print_message(CanMessage* message){
+    printf("CanMessage(id:%d, length:%d, data:{", message->id, message->length);
+    if(message->length){
+        printf("%d", message->byte[0]);
     }
-    for(uint8_t i = 1; i < m.length; i++){
-        printf(", %d", m.byte[i]);
+    for(uint8_t i = 1; i < message->length; i++){
+        printf(", %d", message->byte[i]);
     }
     printf("})\n");
 }
@@ -70,37 +70,37 @@ void can_init(CanInit init, uint8_t rxInterrupt){
 }
 
 
-void can_tx(CanMsg m){
+void can_transmit(CanMessage message){
     while(!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)){}
     
     // Set message ID and use CAN 2.0B protocol
-    CAN0->CAN_MB[txMailbox].CAN_MID = CAN_MID_MIDvA(m.id) | CAN_MID_MIDE ;
+    CAN0->CAN_MB[txMailbox].CAN_MID = CAN_MID_MIDvA(message.id) | CAN_MID_MIDE ;
         
     // Coerce maximum 8 byte length
-    m.length = m.length > 8 ? 8 : m.length;
+    message.length = message.length > 8 ? 8 : message.length;
     
     //  Put message in can data registers
-    CAN0->CAN_MB[txMailbox].CAN_MDL = m.dword[0];
-    CAN0->CAN_MB[txMailbox].CAN_MDH = m.dword[1];
+    CAN0->CAN_MB[txMailbox].CAN_MDL = message.dword[0];
+    CAN0->CAN_MB[txMailbox].CAN_MDH = message.dword[1];
         
     // Set message length and mailbox ready to send
-    CAN0->CAN_MB[txMailbox].CAN_MCR = (m.length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
+    CAN0->CAN_MB[txMailbox].CAN_MCR = (message.length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
 }
 
-uint8_t can_rx(CanMsg* m){
+uint8_t can_receive(CanMessage* message){
     if(!(CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MRDY)){
         return 0;
     }
 
     // Get message ID
-    m->id = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MID & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos);
+    message->id = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MID & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos);
         
     // Get data length
-    m->length = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos);
+    message->length = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos);
     
     // Get data from CAN mailbox
-    m->dword[0] = CAN0->CAN_MB[rxMailbox].CAN_MDL;
-    m->dword[1] = CAN0->CAN_MB[rxMailbox].CAN_MDH;
+    message->dword[0] = CAN0->CAN_MB[rxMailbox].CAN_MDL;
+    message->dword[1] = CAN0->CAN_MB[rxMailbox].CAN_MDH;
                 
     // Reset for new receive
     CAN0->CAN_MB[rxMailbox].CAN_MMR = CAN_MMR_MOT_MB_RX;
@@ -119,7 +119,7 @@ void CAN0_Handler(void){
     // RX interrupt
     if(can_sr & (1 << rxMailbox)){
         // Add your message-handling code here
-        can_printmsg(can_rx());
+        can_print_message(can_receive());
     } else {
         printf("CAN0 message arrived in non-used mailbox\n\r");
     }

@@ -38,10 +38,9 @@ void can_init(CanInit init, uint8_t rxInterrupt);
 
 
 // Dummy type for use with `union_cast`, see below
-typedef struct Byte8 Byte8;
-struct Byte8 {
+typedef struct {
     uint8_t bytes[8];
-};
+} Byte8;
 
 
 // CAN message data type
@@ -58,7 +57,7 @@ struct Byte8 {
 //        float     c;
 //    } __attribute__((packed)) YourStruct ;
 //    
-//    CanMsg m = (CanMsg){
+//    CanMessage message = (CanMessage){
 //        .id = 1,
 //        .length = sizeof(YourStruct),
 //        .byte8 = union_cast(Byte8, ((YourStruct){
@@ -67,10 +66,9 @@ struct Byte8 {
 //            .c = -30.0,
 //        })),
 //    };
-//    can_printmsg(m);
-//    // Should print: CanMsg(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
-typedef struct CanMsg CanMsg;
-struct CanMsg {
+//    can_print_message(message);
+//    // Should print: CanMessage(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
+typedef struct {
     uint8_t id;
     uint8_t length;
     union {
@@ -78,19 +76,19 @@ struct CanMsg {
         uint32_t    dword[2];
         Byte8       byte8;
     };    
-};
+} CanMessage;
 
 // Send a CAN message on the bus. 
 // Blocks if the bus does not receive the message (typically because one of the 
 // receiving nodes has not cleared a buffer)
-void can_tx(CanMsg m);
+void can_transmit(CanMessage message);
 
 // Receive a CAN message.
 // Does not block. Returns 0 if there is no message, 1 otherwise
-uint8_t can_rx(CanMsg* m);
+uint8_t can_receive(CanMessage* message);
 
 // Print a CAN message (using `printf`)
-void can_printmsg(CanMsg m);
+void can_print_message(CanMessage* message);
 
 
 

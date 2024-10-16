@@ -22,10 +22,10 @@ void main(void)
 	oled_init();
 	can_init();
 	printf("Mode: %x\n\r", mcp_read(MCP_CANSTAT));
-	can_message* message = malloc(sizeof(can_message));
+	CanMessage* message = malloc(sizeof(CanMessage));
 	can_construct_message(message, 0x123, "HELLO");
 	can_transmit(message);
-	// can_message received_message = can_receive();
+	// CanMessage received_message = can_receive();
 	can_print_message(message);
 	free(message);
 	message = NULL;
