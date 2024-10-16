@@ -7,7 +7,7 @@ MCUTYPE = __SAM3X8E__
 # Do NOT use a backslash after the last file.
 SOURCE_FILES = \
 	$(BOOTUP) \
-	main.c \
+	main.c can.c time.c uart.c
 #	../path_to/uart.c \
 #   filename1.c \
 #   filename2.c \
