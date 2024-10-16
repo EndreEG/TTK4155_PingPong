@@ -34,12 +34,17 @@
 
 
 
+#define MESSAGE_LENGTH 8
+
 typedef struct {
     uint16_t id;
     uint8_t length;
     uint8_t data[8];
 } can_message;
 
+
 void can_init();
 void can_transmit(can_message* message);
+void can_construct_message(can_message* message, uint16_t id, uint8_t* data);
+void can_print_message(can_message* message);
 can_message can_receive();

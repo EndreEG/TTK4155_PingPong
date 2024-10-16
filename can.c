@@ -15,13 +15,32 @@ void can_init() {
 }
 
 void can_transmit(can_message* message) {
-    mcp_write(TXB0SIDH, message->id >> 8);
-    mcp_write(TXB0SIDL, message->id & 0xFF);
+    mcp_write(TXB0SIDH, message->id >> 8); // Standard identifier high
+    mcp_write(TXB0SIDL, message->id & 0xFF); // Standard identifier low
     mcp_write(TXB0DLC, message->length);
     for (int i = 0; i < message->length; i++) {
         mcp_write(TXB0D0 + i, message->data[i]);
     }
     mcp_rts(MCP_RTS_TX0);
+    printf("Transmitted message: %c\n\r", message->data[0]);
+}
+
+void can_construct_message(can_message* message, uint16_t id, uint8_t* data) {
+    message->id = id;
+    message->length = MESSAGE_LENGTH;
+    for (int i = 0; i < MESSAGE_LENGTH; i++) {
+        message->data[i] = data[i];
+    }
+}
+
+void can_print_message(can_message* message) {
+    printf("ID: %x\n\r", message->id);
+    uint8_t i = 0;
+    while(message->data[i] != '\0'){
+        printf("%c", message->data[i]);
+        i++;
+    }
+    printf("\n\r");
 }
 
 can_message can_receive(){
@@ -32,5 +51,6 @@ can_message can_receive(){
     for (int i = 0; i < message.length; i++) {
         message.data[i] = mcp_read(RXB0D0 + i);
     }
+    printf("Received message: %c\n\r", message.data[0]);
     return message;   
 }

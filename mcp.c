@@ -7,9 +7,9 @@ uint8_t mcp_init() {
     spi_init();
     // mcp_reset(); // Reset signal is physical button
     mcp_reset();
-    mcp_write(MCP_CANCTRL, MODE_CONFIG); // Set MCP2515 to configuration mode
+    // mcp_write(MCP_CANCTRL, MODE_CONFIG); // Set MCP2515 to configuration mode
     // Self-test
-    _delay_ms(3);
+    // _delay_ms(3);
     uint8_t value = mcp_read(MCP_CANSTAT);
     printf("Value: %d\n\r", value);
 

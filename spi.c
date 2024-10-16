@@ -13,6 +13,7 @@ void spi_init(){
     set_bit(DDRB, DDB7); // Set SCK output PB7
 
     clear_bit(DDRB, DDB6); // Set MISO input on PB6
+    clear_bit(PORTB, PB6); // Disable pull-up resistor on MISO, Just in case
     set_bit(DDRB, DDB4); // Set SS output on PB4
     set_ss_high(); // Set SS high to disable slave during initialization
 
