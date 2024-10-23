@@ -1,6 +1,8 @@
 
 #pragma once
 
+#define MESSAGE_LENGTH 8
+
 #include <stdint.h>
 
 // Struct with bit timing information
@@ -9,11 +11,11 @@ typedef struct CanInit CanInit;
 __attribute__((packed)) struct CanInit {
     union {
         struct {
+            uint32_t brp:8;     // Baud rate prescaler, 0b1011
+            uint32_t phase1:4;  // Phase 1 segment
             uint32_t phase2:4;  // Phase 2 segment
             uint32_t propag:4;  // Propagation time segment
-            uint32_t phase1:4;  // Phase 1 segment
-            uint32_t sjw:4;     // Synchronization jump width
-            uint32_t brp:8;     // Baud rate prescaler
+            uint32_t sjw:4;     // Synchronization jump width, 0b01
             uint32_t smp:8;     // Sampling mode
         };
         uint32_t reg;
@@ -67,15 +69,25 @@ typedef struct {
 //        })),
 //    };
 //    can_print_message(message);
-//    // Should print: CanMessage(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
+// //    // Should print: CanMessage(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
+// typedef struct {
+//     uint16_t id;
+//     uint8_t length;
+//     union {
+//         uint8_t     data[8];
+//         uint32_t    dword[2];
+//         Byte8       byte8;
+//     };    
+// } CanMessage;
+
 typedef struct {
-    uint8_t id;
+    uint16_t id;
     uint8_t length;
-    union {
-        uint8_t     byte[8];
+        union {
+        uint8_t     data[8];
         uint32_t    dword[2];
         Byte8       byte8;
-    };    
+    }; 
 } CanMessage;
 
 // Send a CAN message on the bus. 
@@ -90,6 +102,7 @@ uint8_t can_receive(CanMessage* message);
 // Print a CAN message (using `printf`)
 void can_print_message(CanMessage* message);
 
+void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data);
 
 
 

@@ -1,17 +1,21 @@
 
+#pragma once
+
 #include "sam.h"
 #include "can.h"
+#include "utilities.h"
+#include "time.h"
 #include <stdio.h>
 
 void can_print_message(CanMessage* message){
     printf("CanMessage(id:%d, length:%d, data:{", message->id, message->length);
-    if(message->length){
-        printf("%d", message->byte[0]);
+    // if(message->length){
+    //     printf("%d", message->data[0]);
+    // }
+    for(uint8_t i = 0; i < message->length; i++){
+        printf(", %d", message->data[i]);
     }
-    for(uint8_t i = 1; i < message->length; i++){
-        printf(", %d", message->byte[i]);
-    }
-    printf("})\n");
+    printf("})\n\r");
 }
 
 
@@ -69,6 +73,14 @@ void can_init(CanInit init, uint8_t rxInterrupt){
     CAN0->CAN_MR |= CAN_MR_CANEN;
 }
 
+void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data) {
+    message->id = id;
+    message->length = MESSAGE_LENGTH;
+    for (int i = 0; i < MESSAGE_LENGTH; i++) {
+        message->data[i] = data[i];
+    }
+}
+
 
 void can_transmit(CanMessage message){
     while(!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)){}
@@ -76,7 +88,7 @@ void can_transmit(CanMessage message){
     // Set message ID and use CAN 2.0B protocol
     CAN0->CAN_MB[txMailbox].CAN_MID = CAN_MID_MIDvA(message.id) | CAN_MID_MIDE ;
         
-    // Coerce maximum 8 byte length
+    // Coerce maximum 8 data length
     message.length = message.length > 8 ? 8 : message.length;
     
     //  Put message in can data registers
@@ -91,9 +103,10 @@ uint8_t can_receive(CanMessage* message){
     if(!(CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MRDY)){
         return 0;
     }
+    // time_spinFor(msecs(2000));
 
     // Get message ID
-    message->id = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MID & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos);
+    message->id = (uint16_t)((CAN0->CAN_MB[rxMailbox].CAN_MID & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos);
         
     // Get data length
     message->length = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos);

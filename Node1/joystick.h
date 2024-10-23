@@ -1,4 +1,7 @@
 #pragma once
+
+#define JOYSTICK_CAN_ID 0x10
+
 #include "utilities.h"
 
 // Left slider : PB5

@@ -43,10 +43,10 @@ void adc_read(uint8_t* adc_readings) {
     ADC[0] = 0;
     _delay_us(1);
     loop_until_bit_is_set(PIND, PIND4);
-    adc_readings[1] = ADC[0];
-    adc_readings[0] = ADC[1];
-    adc_readings[2] = ADC[2];
-    adc_readings[3] = ADC[3];
+    adc_readings[1] = ADC[0]; // X-axis
+    adc_readings[0] = ADC[1]; // Y-axis
+    adc_readings[2] = ADC[2]; // Left slider
+    adc_readings[3] = ADC[3]; // Right slider
 }
 
 int8_t calibration() {
