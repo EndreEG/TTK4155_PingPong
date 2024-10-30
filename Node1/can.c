@@ -47,16 +47,23 @@ void can_print_message(CanMessage* message) {
     printf("\n\r");
 }
 
-void can_receive(CanMessage* message) {
-    // message->id = mcp_read(RXB0SIDH) << 8;
-    // message->id = mcp_read(RXB0SIDL);
+bool can_receive(CanMessage* message) {
+    if (!(mcp_read_status() & (1 << MCP_CANINTF_RX0IF))) {
+        return false;
+    }
+
     message->length = mcp_read(RXB0DLC);
-    // message->length = mcp_read(RXB0DLC) & 0x0F;
     message->id = ((uint16_t)mcp_read(RXB0SIDH)) << 3;
     message->id |= ((uint16_t)mcp_read(RXB0SIDL) >> 5) & 0b111;
+
     for (int i = 0; i < message->length; i++) {
         message->data[i] = mcp_read(RXB0D0 + i);
     }
+
+    mcp_bit_modify(MCP_CANINTF, (1 << MCP_CANINTF_RX0IF), 0 << MCP_CANINTF_RX0IF);
+
     printf("Received message: %c\n\r", message->data[0]);
+
+    return true;
     // return message;   
 }

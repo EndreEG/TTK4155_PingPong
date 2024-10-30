@@ -42,24 +42,29 @@ int main()
     // Configure PB13 as an output
     PIOB->PIO_OER = PIO_PB13;
 
+    // CanMessage message;
+    // can_transmit(message);
+    // time_spinFor(msecs(1000));
     CanMessage message;
-    message.id = 0;
-    message.length = 0;
-    for (int i = 0; i < 8; i++) {
-        message.data[i] = 0;
-    }
+	can_construct_message(&message, 0, "HELLOLO");
+    can_transmit(&message);
+    // message.id = 0;
+    // message.length = 0;
+    // for (int i = 0; i < 8; i++) {
+    //     message.data[i] = 0;
+    // }
     
-    while (1)
-    {
-        if(!can_receive(&message)) {
-            printf("Waiting for message\n\r");
-        }
-        can_print_message(&message);
-        // printf("Hello World\n\r");
-        // PIOB->PIO_CODR = PIO_PB13;
-        time_spinFor(msecs(2500));
-        // PIOB->PIO_SODR = PIO_PB13;
-        // time_spinFor(msecs(500));
-    }
+    // while (1)
+    // {
+    //     if(!can_receive(&message)) {
+    //         printf("Waiting for message\n\r");
+    //     }
+    //     can_print_message(&message);
+    //     // printf("Hello World\n\r");
+    //     // PIOB->PIO_CODR = PIO_PB13;
+    //     time_spinFor(msecs(2500));
+    //     // PIOB->PIO_SODR = PIO_PB13;
+    //     // time_spinFor(msecs(500));
+    // }
     
 }

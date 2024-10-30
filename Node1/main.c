@@ -22,12 +22,26 @@ void main(void)
 	oled_init();
 	can_init();
 	printf("Mode: %x\n\r", mcp_read(MCP_CANSTAT));
-	// CanMessage* message = malloc(sizeof(CanMessage));
 	CanMessage message;
-	can_construct_message(&message, 3, "HELLO");
-	// _delay_ms(1000);
-	can_transmit(&message);
-	_delay_ms(1000);
+	can_construct_message(&message, 0x3, "NULL");
+	// can_transmit(&message);
+	// _delay_ms(1);
+
+	// while (1)
+	// {
+	// 	if (!can_receive(&message)) {
+	// 		printf("Waiting for message\n\r");
+	// 	}
+	// 	else {
+	// 		printf("Received message\n\r");
+	// 		can_print_message(&message);
+	// 	}
+	// 	_delay_ms(1000);
+	// }
+	
+
+
+
 	// CanMessage received_message = can_receive();
 	// can_print_message(message);
 	// free(message);

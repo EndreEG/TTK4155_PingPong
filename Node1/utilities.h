@@ -1,5 +1,6 @@
 #pragma once
 #include "stdlib.h"
+#include "stdbool.h"
 #include "stdio.h"
 #include "avr/io.h"
 #include <avr/pgmspace.h>

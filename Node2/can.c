@@ -82,21 +82,21 @@ void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data) {
 }
 
 
-void can_transmit(CanMessage message){
+void can_transmit(CanMessage *message){
     while(!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)){}
     
     // Set message ID and use CAN 2.0B protocol
-    CAN0->CAN_MB[txMailbox].CAN_MID = CAN_MID_MIDvA(message.id) | CAN_MID_MIDE ;
+    CAN0->CAN_MB[txMailbox].CAN_MID = CAN_MID_MIDvA(message->id) | CAN_MID_MIDE ;
         
     // Coerce maximum 8 data length
-    message.length = message.length > 8 ? 8 : message.length;
+    message->length = message->length > 8 ? 8 : message->length;
     
     //  Put message in can data registers
-    CAN0->CAN_MB[txMailbox].CAN_MDL = message.dword[0];
-    CAN0->CAN_MB[txMailbox].CAN_MDH = message.dword[1];
+    CAN0->CAN_MB[txMailbox].CAN_MDL = message->dword[0];
+    CAN0->CAN_MB[txMailbox].CAN_MDH = message->dword[1];
         
     // Set message length and mailbox ready to send
-    CAN0->CAN_MB[txMailbox].CAN_MCR = (message.length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
+    CAN0->CAN_MB[txMailbox].CAN_MCR = (message->length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
 }
 
 uint8_t can_receive(CanMessage* message){

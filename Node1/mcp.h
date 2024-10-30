@@ -4,6 +4,8 @@
 #ifndef __MCP2515_H
 #define __MCP2515_H
 
+#define MCP_CANINTF_RX0IF 0
+
 uint8_t mcp_init();
 uint8_t mcp_read(uint8_t address);
 void mcp_write(uint8_t address, uint8_t data);

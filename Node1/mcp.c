@@ -1,7 +1,5 @@
 #include "mcp.h"
 
-// TODO: MCP2515 misbehaves. Needs punishment- I mean, debugging. 
-// TODO: MCP does not respond to SPI commands. MISO line is always low. MOSI seems to work fine. We can put bits in SPDR and they are transmitted.
 
 uint8_t mcp_init() {
     spi_init();
@@ -47,14 +45,14 @@ void mcp_write(uint8_t address, uint8_t data){
 
 void mcp_rts(uint8_t instruction) {
     set_ss_low();
-    spi_transceive(instruction);
+    spi_write(instruction);
     set_ss_high();
 }
 
 uint8_t mcp_read_status() {
     set_ss_low();
-    spi_transceive(MCP_READ_STATUS);
-    uint8_t can_status = spi_transceive(0x00);
+    spi_write(MCP_READ_STATUS);
+    uint8_t can_status = spi_read();
     set_ss_high();
     return can_status;
 }

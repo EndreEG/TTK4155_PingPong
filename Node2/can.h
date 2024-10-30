@@ -93,7 +93,7 @@ typedef struct {
 // Send a CAN message on the bus. 
 // Blocks if the bus does not receive the message (typically because one of the 
 // receiving nodes has not cleared a buffer)
-void can_transmit(CanMessage message);
+void can_transmit(CanMessage *message);
 
 // Receive a CAN message.
 // Does not block. Returns 0 if there is no message, 1 otherwise

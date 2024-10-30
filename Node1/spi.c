@@ -32,18 +32,11 @@ void spi_init(){
 uint8_t spi_transceive(uint8_t data){
     // Start transmission
     SPDR = data;
-    // printf("SPDR set to: %d\n\r", data);
-    // _delay_ms(100);
 
     // Wait for transmission complete
-    while(!(SPSR & (1<<SPIF))) {
-        // printf("Waiting for SPIF...\n\r");
-        // _delay_ms(100);
-    }
+    while(!(SPSR & (1<<SPIF))) {}
 
     uint8_t result = SPDR;
-    // printf("Received data: %d\n\r", data);
-    // _delay_ms(100);
     return result;
 }
 
@@ -51,18 +44,12 @@ uint8_t spi_read()
 {
     uint8_t dummy = 0xFF;
     SPDR = dummy;
-    // printf("SPDR, dummy: %d, %d\n\r", SPDR, dummy);
     while(!(SPSR & (1<<SPIF)));
-    // printf("SPDR: %d\n\r", SPDR);
     return SPDR;
-    // uint8_t result = SPDR;
-    // printf("Result: %d\n\r", result);
-    // return result;
 }
 
 void spi_write(uint8_t data) 
 {
     SPDR = data;
-    // printf("SPDR set to: %d\n\r", SPDR);
     while(!(SPSR & (1<<SPIF)));
 }

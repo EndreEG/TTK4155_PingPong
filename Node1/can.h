@@ -47,4 +47,4 @@ void can_init();
 void can_transmit(CanMessage* message);
 void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data);
 void can_print_message(CanMessage* message);
-void can_receive(CanMessage* message);
+bool can_receive(CanMessage* message);
