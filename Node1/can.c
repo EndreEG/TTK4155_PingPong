@@ -5,8 +5,9 @@ void can_init() {
     mcp_init();
     mcp_write(MCP_RXB0CTRL, 0x60); // Enable receive buffer 0, higher priority buffer. Turn mask/filters off
     mcp_write(MCP_RXB1CTRL, 0x60); // Enable receive buffer 1, lower priority buffer.
-    mcp_write(MCP_CANINTE, 0x03);
+    mcp_write(MCP_CANINTE, 0x00); // Disable all interrupts
     mcp_write(MCP_CANINTF, 0x00);
+    // mcp_bit_modify(MCP_CANCTRL, (1 << 3), 1); 
 
     mcp_write(MCP_CNF1, 0b10000011); // Set baud/bit rate to 125 kbps
     mcp_write(MCP_CNF2, 0b10110001);
@@ -17,6 +18,7 @@ void can_init() {
 
 void can_transmit(CanMessage* message) {
     // ID: 0x10 = Joystick position
+
     mcp_write(TXB0SIDH, (message->id >> 3) & 0xFF); // Standard identifier high
     mcp_write(TXB0SIDL, (message->id & 0b111) << 5); // Standard identifier low
     mcp_write(TXB0DLC, message->length);
@@ -24,7 +26,6 @@ void can_transmit(CanMessage* message) {
         mcp_write(TXB0D0 + i, message->data[i]);
     }
     mcp_rts(MCP_RTS_TX0);
-    printf("Transmitted message: %c\n\r", message->data[0]);
 }
 
 void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data) {
@@ -33,7 +34,6 @@ void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data) {
     for (int i = 0; i < MESSAGE_LENGTH; i++) {
         message->data[i] = data[i];
     }
-    printf("Message id: %x\n\r", message->id);
 }
 
 void can_print_message(CanMessage* message) {
@@ -61,7 +61,7 @@ bool can_receive(CanMessage* message) {
 
     mcp_bit_modify(MCP_CANINTF, (1 << MCP_CANINTF_RX0IF), 0 << MCP_CANINTF_RX0IF);
 
-    printf("Received message: %c\n\r", message->data[0]);
+    // printf("Received message: %c\n\r", message->data[0]);
 
     return true;
     // return message;   

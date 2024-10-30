@@ -5,6 +5,7 @@
 #define __MCP2515_H
 
 #define MCP_CANINTF_RX0IF 0
+#define MCP_TXB0CTRL_TXREQ 3
 
 uint8_t mcp_init();
 uint8_t mcp_read(uint8_t address);

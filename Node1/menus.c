@@ -46,7 +46,7 @@ state main_menu(){
     while (1)
 	{
 		adc_read(adc_readings);
-		direction = get_joystick_direction(adc_readings[0], adc_readings[1]);
+		direction = get_joystick_direction(get_joystick_position());
 		current_arrow_pos = move_arrow(current_arrow_pos, direction);
 		if (current_arrow_pos != previous_arrow_pos) {
 			previous_arrow_pos = current_arrow_pos;
@@ -62,8 +62,8 @@ state main_menu(){
             break;
         }
 	}
-	// free(adc_readings);
-	// adc_readings = NULL;
+	free(adc_readings);
+	adc_readings = NULL;
 }
 
 state play(){

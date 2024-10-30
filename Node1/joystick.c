@@ -5,6 +5,7 @@
 #include "can.h"
 
 
+
 uint8_t joystick_position_calibration() {
     JoystickPosition pos;
     uint32_t sum_x = 0;
@@ -49,12 +50,11 @@ JoystickDirection get_joystick_direction(JoystickPosition pos) {
     }
 }
 
+void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
+    uint8_t position[2] = {pos->x, pos->y};
+    can_construct_message(&message, JOYSTICK_CAN_ID, "BALL");
+    // message.length = 3; // 2 bytes for position, 1 byte for direction
+    // message.data[2] = dir;
 
-void joystick_transmit(JoystickPosition pos, JoystickDirection dir) {
-    // Create a CAN message and transmit it
-    CanMessage *message = malloc(sizeof(CanMessage));
-    can_construct_message(message, JOYSTICK_CAN_ID, (uint8_t*)&pos);
-    can_transmit(message);
-    free(message);
-    message = NULL;
+    can_transmit(&message);
 }

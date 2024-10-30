@@ -47,30 +47,30 @@ int main()
     // time_spinFor(msecs(1000));
     CanMessage message;
 	can_construct_message(&message, 4, "LOL123");
-    can_transmit(&message);
+    // can_transmit(&message);
     // message.id = 0;
     // message.length = 0;
     // for (int i = 0; i < 8; i++) {
     //     message.data[i] = 0;
     // }
-    while(1) {}
+    // while(1) {}
     
-    // while (1)
-    // {
-    //     if(!can_receive(&message)) {
-    //         printf("Waiting for message\n\r");
-    //     }
-    //     else {
-    //         printf("Received message\n\r");
-    //         can_print_message(&message);
-    //         time_spinFor(msecs(1000));
-    //     }
-    // //     // can_print_message(&message);
-    // //     // printf("Hello World\n\r");
-    // //     // PIOB->PIO_CODR = PIO_PB13;
-    // //     // time_spinFor(msecs(2500));
-    // //     // PIOB->PIO_SODR = PIO_PB13;
-    // //     // time_spinFor(msecs(500));
-    // }
+    while (1)
+    {
+        if(!can_receive(&message)) {
+            // printf("Waiting for message\n\r");
+            // time_spinFor(msecs(100));
+        }
+        else {
+            can_print_message(&message);
+            // time_spinFor(msecs(100));
+        }
+    //     // can_print_message(&message);
+    //     // printf("Hello World\n\r");
+    //     // PIOB->PIO_CODR = PIO_PB13;
+    //     // time_spinFor(msecs(2500));
+    //     // PIOB->PIO_SODR = PIO_PB13;
+    //     // time_spinFor(msecs(500));
+    }
     
 }
