@@ -110,14 +110,15 @@ uint8_t can_receive(CanMessage* message){
         
     // Get data length
     message->length = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos);
-    
-    // Get data from CAN mailbox
+
+    // Get data
     message->dword[0] = CAN0->CAN_MB[rxMailbox].CAN_MDL;
     message->dword[1] = CAN0->CAN_MB[rxMailbox].CAN_MDH;
-                
-    // Reset for new receive
-    CAN0->CAN_MB[rxMailbox].CAN_MMR = CAN_MMR_MOT_MB_RX;
+    
+    // Get data from CAN mailbox	can_transmit(&message);
     CAN0->CAN_MB[rxMailbox].CAN_MCR |= CAN_MCR_MTCR;
+
+
     return 1;
 }
     

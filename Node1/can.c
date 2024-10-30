@@ -3,14 +3,13 @@
 
 void can_init() {
     mcp_init();
-    mcp_write(MCP_RXB0CTRL, 0x60); // Enable receive buffer 0, higher priority buffer
+    mcp_write(MCP_RXB0CTRL, 0x60); // Enable receive buffer 0, higher priority buffer. Turn mask/filters off
     mcp_write(MCP_RXB1CTRL, 0x60); // Enable receive buffer 1, lower priority buffer.
     mcp_write(MCP_CANINTE, 0x03);
     mcp_write(MCP_CANINTF, 0x00);
 
-    mcp_write(MCP_CNF1, 0b01000011); // Set baud/bit rate to 125 kbps
-    // mcp_write(MCP_CNF2, 0b10110101);
-    mcp_write(MCP_CNF2, 0b10110000);
+    mcp_write(MCP_CNF1, 0b10000011); // Set baud/bit rate to 125 kbps
+    mcp_write(MCP_CNF2, 0b10110001);
     mcp_write(MCP_CNF3, 0b00000101);
     mcp_bit_modify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 

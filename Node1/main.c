@@ -23,21 +23,23 @@ void main(void)
 	can_init();
 	printf("Mode: %x\n\r", mcp_read(MCP_CANSTAT));
 	CanMessage message;
-	can_construct_message(&message, 0x3, "NULL");
+	can_construct_message(&message, 0x6, "BBAB");
 	// can_transmit(&message);
 	// _delay_ms(1);
 
-	// while (1)
-	// {
-	// 	if (!can_receive(&message)) {
-	// 		printf("Waiting for message\n\r");
-	// 	}
-	// 	else {
-	// 		printf("Received message\n\r");
-	// 		can_print_message(&message);
-	// 	}
-	// 	_delay_ms(1000);
-	// }
+	// while(1){	 can_transmit(&message);    }	
+
+	while (1)
+	{
+		if (!can_receive(&message)) {
+			printf("Waiting for message\n\r");
+		}
+		else {
+			printf("Received message\n\r");
+			can_print_message(&message);
+			_delay_ms(1000);
+		}
+	}
 	
 
 
