@@ -1,6 +1,8 @@
 #pragma once
 
 #define JOYSTICK_CAN_ID 0x10
+#define MIDPOINT_X 168
+#define MIDPOINT_Y 172
 
 #include "utilities.h"
 #include "can.h"
@@ -31,3 +33,4 @@ JoystickDirection get_joystick_direction(JoystickPosition pos);
 JoystickPosition get_joystick_position();
 uint8_t joystick_position_calibration();
 void joystick_transmit(CanMessage * message, JoystickPosition *pos);
+void BONK_BONK(JoystickPosition *pos);

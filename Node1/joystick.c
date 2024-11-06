@@ -32,6 +32,10 @@ JoystickPosition get_joystick_position() {
     uint8_t adc_readings[4];
     adc_read(&adc_readings);
     pos.x = adc_readings[0];
+    if (pos.x < 1) {
+        pos.x = 1;
+    }
+
     pos.y = adc_readings[1];
     return pos;
 }
@@ -57,4 +61,36 @@ void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
     // message.data[2] = dir;
 
     can_transmit(&message);
+}
+
+void BONK_BONK(JoystickPosition *pos) {
+    // Fryser ved (50, 190), (0, 61), (166, 190), (53, 237)
+
+    if (pos->x == 0 && pos->y == 61) {
+        pos->x = 0;
+        pos->y = 62;
+    }
+    else if (pos->x == 50 && pos->y == 190) {
+        pos->x = 50;
+        pos->y = 191;
+    }
+    else if (pos->x == 166 && pos->y == 190) {
+        pos->x = 166;
+        pos->y = 191;
+    }
+    else if (pos->x == 53 && pos->y == 237) {
+        pos->x = 53;
+        pos->y = 238;
+    }
+    else if (pos->x == 169 && pos->y == 6) {
+        pos->x = 168;
+        pos->y = 6;
+    }
+
+    if ((MIDPOINT_X -3 < pos->x) && (pos->x < MIDPOINT_X + 3)) {
+        pos->x = MIDPOINT_X;
+    }
+    if ((MIDPOINT_Y -3 < pos->y) && (pos->y < MIDPOINT_Y + 3)) {
+        pos->y = MIDPOINT_Y;
+    }
 }

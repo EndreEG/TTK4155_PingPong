@@ -7,7 +7,6 @@ void can_init() {
     mcp_write(MCP_RXB1CTRL, 0x60); // Enable receive buffer 1, lower priority buffer.
     mcp_write(MCP_CANINTE, 0x00); // Disable all interrupts
     mcp_write(MCP_CANINTF, 0x00);
-    // mcp_bit_modify(MCP_CANCTRL, (1 << 3), 1); 
 
     mcp_write(MCP_CNF1, 0b10000011); // Set baud/bit rate to 125 kbps
     mcp_write(MCP_CNF2, 0b10110001);
@@ -17,8 +16,6 @@ void can_init() {
 }
 
 void can_transmit(CanMessage* message) {
-    // ID: 0x10 = Joystick position
-
     mcp_write(TXB0SIDH, (message->id >> 3) & 0xFF); // Standard identifier high
     mcp_write(TXB0SIDL, (message->id & 0b111) << 5); // Standard identifier low
     mcp_write(TXB0DLC, message->length);
@@ -61,8 +58,22 @@ bool can_receive(CanMessage* message) {
 
     mcp_bit_modify(MCP_CANINTF, (1 << MCP_CANINTF_RX0IF), 0 << MCP_CANINTF_RX0IF);
 
-    // printf("Received message: %c\n\r", message->data[0]);
+    printf("Received message: %c\n\r", message->data[0]);
 
     return true;
-    // return message;   
+}
+
+void handle_message_based_on_id(CanMessage* message) {
+    switch (message->id)
+    {
+    case 0x01: // U Ded ID
+        printf("Received message with id 0x01\n\r");
+        printf("Game over\n\r");
+        break;
+
+    case 0x02: // Hit ID
+        printf("Received message with id 0x02\n\r");
+        printf("You got hit: You have %d lived left.\n\r", message->data[0]);
+        break;
+    }
 }
