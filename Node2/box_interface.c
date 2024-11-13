@@ -5,15 +5,16 @@
 
 void set_motor_pos(uint8_t data[8]) {
     uint8_t x_pos = data[0];
-    uint32_t duty_cycle = 100 * abs(x_pos - MIDPOINT_X);
-    pwm_set_duty_cycle(duty_cycle, 0);
+    uint16_t midpoint_x = data[3];
+    uint32_t duty_cycle = 100 * abs(x_pos - midpoint_x);
     set_motor_direction((enum MotorDirection)data[2]);
+    pwm_set_duty_cycle(duty_cycle, 0);
 }
 
 void set_servo_pos(uint8_t data[8]) {
     uint8_t y_pos = data[1];
     uint32_t duty_cycle = DUTY_CYCLE_MIN + ((DUTY_CYCLE_MAX - DUTY_CYCLE_MIN) / 255) * y_pos;
-    printf("Setting duty cycle to %d\n\r", duty_cycle);
+    // printf("Setting duty cycle to %d\n\r", duty_cycle);
     pwm_set_duty_cycle(duty_cycle, 1);
 }
 

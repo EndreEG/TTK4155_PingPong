@@ -63,7 +63,7 @@ void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
     can_transmit(&message);
 }
 
-void BONK_BONK(JoystickPosition *pos) {
+void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x) {
     // Fryser ved (50, 190), (0, 61), (166, 190), (53, 237)
 
     if (pos->x == 0 && pos->y == 61) {
@@ -86,11 +86,29 @@ void BONK_BONK(JoystickPosition *pos) {
         pos->x = 168;
         pos->y = 6;
     }
-
-    if ((MIDPOINT_X -3 < pos->x) && (pos->x < MIDPOINT_X + 3)) {
-        pos->x = MIDPOINT_X;
+    printf("X: %d\n\r", pos->x);
+    if ((midpoint_x -3 < pos->x) && (pos->x < midpoint_x + 3)) {
+        pos->x = midpoint_x;
     }
     if ((MIDPOINT_Y -3 < pos->y) && (pos->y < MIDPOINT_Y + 3)) {
         pos->y = MIDPOINT_Y;
     }
+}
+
+uint16_t find_midpoint() {
+    JoystickPosition pos;
+    uint32_t sum_x = 0;
+    // uint32_t sum_y = 0;
+    uint16_t samples = 9000; // Number of samples for calibration
+
+    for (uint16_t i = 0; i < samples; i++) {
+        pos = get_joystick_position();
+        sum_x += pos.x;
+        // sum_y += pos.y;
+    }
+
+    uint16_t avg_x = sum_x / samples;
+    // uint16_t avg_y = sum_y / samples;
+
+    return avg_x; // Return the average calibration value
 }

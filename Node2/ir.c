@@ -15,21 +15,21 @@ bool ir_hit()
 void update_hit_status(bool *hit, uint16_t *health, CanMessage *message)
 {
     if (ir_hit()) {
-        if (!hit) {
-            hit = true;
-            health--;
-            printf("You got hit: You have %d lives left.\n\r", health);
-            if (health == 0) {
-                can_construct_message(&message, 0x01, "DEAD");
+        if (!(*hit)) {
+            *hit = true;
+            (*health)--;
+            printf("You got hit: You have %d lives left.\n\r", *health);
+            if (*health == 0) {
+                can_construct_message(message, 0x01, "DEAD");
                 can_transmit(*message);
             }
             else {
-                can_construct_message(&message, 0x02, health);
+                can_construct_message(message, 0x02, *health);
                 can_transmit(*message);
             }
         }
     }
     else {
-        hit = false;
+        *hit = false;
     }
 }

@@ -33,19 +33,22 @@ void main(void)
 	message.length = 8;
 
 	uint64_t counter = 0;
+
+	uint16_t midpoint_x = find_midpoint();
 	while (1) {
 		
 		pos = get_joystick_position();
 		dir = get_joystick_direction(pos);
 
 
-		BONK_BONK(&pos);
+		BONK_BONK(&pos, midpoint_x);
 
 
 		message.id = 0x10;
 		message.data[0] = pos.x;
 		message.data[1] = pos.y;
 		message.data[2] = dir;
+		message.data[3] = midpoint_x;
 
 		can_transmit(&message);
 		if (can_receive(&message)) {
