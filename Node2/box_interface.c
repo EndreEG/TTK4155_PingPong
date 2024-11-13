@@ -6,6 +6,10 @@
 #include "motor.h"
 #include "pwm.h"
 
+#define Kp 0.5f
+#define T 0.001f
+#define Ki 1.5f
+
 void set_motor_pos(uint8_t data[8]) {
     uint8_t x_pos = data[0];
     uint16_t midpoint_x = data[3];
@@ -38,27 +42,29 @@ void fire_solenoid() {
 void PI_controller_init() {
     // Set up PI controller using timer counter interrupt
     NVIC_EnableIRQ(TC0_IRQn); // Enable interrupt
-    set_bit(PMC->PMC_PCER0, ID_TC0); // Enable peripheral clock
+    REG_PMC_WPMR = 0x504D4300; // Disable write protection
+    PMC->PMC_PCR |= PMC_PCR_EN | PMC_PCR_CMD | PMC_PCR_PID(ID_TC0);
+    REG_TC0_WPMR = 0x54494D00; // Disable write protection
+    // set_bit(PMC->PMC_PCER0, ID_TC0); // Enable peripheral clock
     
     // Set up timer counter
     REG_TC0_CMR0 = TC_CMR_TCCLKS_TIMER_CLOCK4 | TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC;
-    REG_TC0_RC0 = 1000;
 
     REG_TC0_IER0 = TC_IER_CPCS;
-    // REG_TC0_IMR0 = TC_IMR_CPCS;
-
+    TC0->TC_CHANNEL[0].TC_IMR = TC_IMR_CPCS;
     REG_TC0_CCR0 = TC_CCR_CLKEN | TC_CCR_SWTRG;
+    REG_TC0_RC0 = 1000;
     
     ref_pos = 0;
     actual_pos = 0;
     error = 0;
-    error_sum = 0;
 }
 
 void TC0_Handler(void) {
     // Clear the interrupt flag
     REG_TC0_SR0;
     execute_controller = 1;
+    // printf("Interrupt\n\r");
 }
 
 bool should_execute_controller() {
@@ -69,11 +75,19 @@ void set_reference_position(uint8_t pos) {
     ref_pos = pos;
 }
 
-void PI_controller(uint32_t _actual_pos, uint8_t _ref_pos, uint8_t direction) {
-    execute_controller = 0;
+void PI_controller(float _actual_pos, float _ref_pos, uint8_t direction) {
+    static float error_sum = 0;
     error = _ref_pos - _actual_pos;
     error_sum += error;
-    uint32_t duty_cycle = 0.1 * error + 0.01 * error_sum;
+    float u = (Kp * error + T * Ki * error_sum) * 25000;
+    if (u > 20000) {
+        u = 20000;
+    }
+    else if (u < 0) {
+        u = 0;
+    }
     set_motor_direction((enum MotorDirection)direction);
-    pwm_set_duty_cycle(duty_cycle, 0);
+    pwm_set_duty_cycle(u, 0);
+    execute_controller = 0;
+    printf("Actual: %f, Ref: %f, dir: %d, e: %f, e_sum: %f, u: %f\n\r", _actual_pos, _ref_pos, direction, error, error_sum, u, __FILE__, __LINE__);
 }

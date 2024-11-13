@@ -35,6 +35,7 @@ int main()
     motor_init();
     solenoid_init();
     decoder_init();
+    PI_controller_init();
 
 
     CanMessage message;
@@ -42,11 +43,11 @@ int main()
 
     bool hit = false;
     uint16_t health = 100;
-    uint16_t decoder_value = 0;
+    float decoder_value = 0;
     while (1)
     {
-        decoder_value = decoder_read();
-        printf("Decoder value: %d\n\r", decoder_value);
+        // decoder_value = decoder_read();
+        // printf("Decoder value: %.6f\n\r", decoder_value);
 
         update_hit_status(&hit, &health, &message);
         

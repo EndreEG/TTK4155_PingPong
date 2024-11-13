@@ -122,10 +122,10 @@ void handle_message_based_on_id(CanMessage* message) {
     switch (message->id)
     {
     case 0x10: // Joystick ID
-        // if (should_execute_controller()) {
-        //     PI_controller(decoder_read(), message->data[0], message->data[2]);
-        // }
-        set_motor_pos(message->data);
+        if (should_execute_controller()) {
+            PI_controller(decoder_read(), (message->data[0] / 255.0f), message->data[2]);
+        }
+        // set_motor_pos(message->data);
         set_servo_pos(message->data);
         break;
 
