@@ -21,6 +21,7 @@ void main(void)
 	adc_init();
 	xmem_init();
 	oled_init();
+	joystick_init();
 	can_init();
 	printf("Mode: %x\n\r", mcp_read(MCP_CANSTAT));
 	CanMessage message;
@@ -38,10 +39,10 @@ void main(void)
 	uint16_t midpoint_x = find_midpoint();
 	while (1) {
 
-		// printf("Button pressed: %d\n\r", is_joystick_button_pressed());
-		if (!is_joystick_button_pressed()) {
+		if (is_joystick_button_pressed()) {
 			printf("Button not pressed\n\r");
 			message.id = 0x20;
+			_delay_ms(250);
 		}
 
 		else {

@@ -4,7 +4,10 @@
 #include "adc.h"
 #include "can.h"
 
-
+void joystick_init() {
+    clear_bit(DDRB, DDB2); // Set PB2 as input for joystick button (redundant)
+    set_bit(PORTB, PB2); // Enable pull-up resistor on PB2
+}
 
 uint8_t joystick_position_calibration() {
     JoystickPosition pos;

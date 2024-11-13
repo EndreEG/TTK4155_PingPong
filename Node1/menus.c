@@ -2,8 +2,6 @@
 
 void menu_init() {
     oled_clear();
-    clear_bit(DDRB, DDB2); // Set PB2 as input for joystick button (redundant)
-    set_bit(PORTB, PB2); // Enable pull-up resistor
 }
 
 void menu() {

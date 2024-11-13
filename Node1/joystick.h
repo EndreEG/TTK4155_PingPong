@@ -30,6 +30,7 @@ typedef struct {
     int y;
 } JoystickPosition;
 
+void joystick_init();
 JoystickDirection get_joystick_direction(JoystickPosition pos);
 JoystickPosition get_joystick_position();
 uint8_t is_joystick_button_pressed();
