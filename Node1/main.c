@@ -26,6 +26,7 @@ void main(void)
 	CanMessage message;
 	JoystickPosition pos;
 	JoystickDirection dir;
+	uint8_t button_pressed;
 
 
 	printf("Entering loop\n\r");
@@ -36,19 +37,26 @@ void main(void)
 
 	uint16_t midpoint_x = find_midpoint();
 	while (1) {
-		
-		pos = get_joystick_position();
-		dir = get_joystick_direction(pos);
+
+		// printf("Button pressed: %d\n\r", is_joystick_button_pressed());
+		if (!is_joystick_button_pressed()) {
+			printf("Button not pressed\n\r");
+			message.id = 0x20;
+		}
+
+		else {
+			pos = get_joystick_position();
+			dir = get_joystick_direction(pos);
+
+			BONK_BONK(&pos, midpoint_x);
 
 
-		BONK_BONK(&pos, midpoint_x);
-
-
-		message.id = 0x10;
-		message.data[0] = pos.x;
-		message.data[1] = pos.y;
-		message.data[2] = dir;
-		message.data[3] = midpoint_x;
+			message.id = 0x10;
+			message.data[0] = pos.x;
+			message.data[1] = pos.y;
+			message.data[2] = dir;
+			message.data[3] = midpoint_x;
+		}
 
 		can_transmit(&message);
 		if (can_receive(&message)) {

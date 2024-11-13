@@ -1,7 +1,10 @@
+#include <stdlib.h>
+#include "sam.h"
+#include "time.h"
+#include "utilities.h"
 #include "box_interface.h"
 #include "motor.h"
 #include "pwm.h"
-#include <stdlib.h>
 
 void set_motor_pos(uint8_t data[8]) {
     uint8_t x_pos = data[0];
@@ -18,7 +21,15 @@ void set_servo_pos(uint8_t data[8]) {
     pwm_set_duty_cycle(duty_cycle, 1);
 }
 
+void solenoid_init() {
+    // Enable peripheral clock
+    set_bit(PMC->PMC_PCER0, ID_PIOA);
+    PIOA->PIO_PER  = PIO_PA10;
+    PIOA->PIO_OER  = PIO_PA10;
+}
 
 void fire_solenoid() {
-    
+    PIOA->PIO_CODR = PIO_PA10;
+    time_spinFor(msecs(50));
+    PIOA->PIO_SODR = PIO_PA10;
 }

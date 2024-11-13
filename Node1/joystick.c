@@ -54,6 +54,10 @@ JoystickDirection get_joystick_direction(JoystickPosition pos) {
     }
 }
 
+uint8_t is_joystick_button_pressed(){
+    return !test_bit(PINB, PB2);
+}
+
 void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
     uint8_t position[2] = {pos->x, pos->y};
     can_construct_message(&message, JOYSTICK_CAN_ID, "BALL");
@@ -86,7 +90,7 @@ void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x) {
         pos->x = 168;
         pos->y = 6;
     }
-    printf("X: %d\n\r", pos->x);
+    // printf("X: %d\n\r", pos->x);
     if ((midpoint_x -3 < pos->x) && (pos->x < midpoint_x + 3)) {
         pos->x = midpoint_x;
     }

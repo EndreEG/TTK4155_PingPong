@@ -53,7 +53,7 @@ state main_menu(){
             printf("Current arrow pos: %d\n\r", current_arrow_pos);
 			_delay_ms(200);
 		}
-        if (get_joystick_button_pressed()) {
+        if (is_joystick_button_pressed()) {
             printf("Button pressed\n\r");
             _delay_ms(200);
             free(adc_readings);
@@ -84,10 +84,6 @@ state settings(){
 state quit(){
     printf("Quit\n\r");
     return MAIN_MENU;
-}
-
-uint8_t get_joystick_button_pressed(){
-    return !test_bit(PINB, PB2);
 }
 
 state state_machine(state current_state) {

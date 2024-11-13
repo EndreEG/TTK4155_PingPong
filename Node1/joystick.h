@@ -7,6 +7,7 @@
 #include "utilities.h"
 #include "can.h"
 
+
 // Left slider : PB5
 // Right slider : PD2
 // Left button : PB6
@@ -31,6 +32,7 @@ typedef struct {
 
 JoystickDirection get_joystick_direction(JoystickPosition pos);
 JoystickPosition get_joystick_position();
+uint8_t is_joystick_button_pressed();
 uint8_t joystick_position_calibration();
 void joystick_transmit(CanMessage * message, JoystickPosition *pos);
 void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x);

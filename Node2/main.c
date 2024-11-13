@@ -31,18 +31,20 @@ int main()
     pwm_init();
     adc_init();
     motor_init();
+    solenoid_init();
 
 
     CanMessage message;
 	can_construct_message(&message, 4, "LOL123");
 
     bool hit = false;
-    uint16_t health = 10;
+    uint16_t health = 100;
     while (1)
     {
+        // fire_solenoid();
+        // time_spinFor(msecs(1000));
         update_hit_status(&hit, &health, &message);
         
-
         if(!can_receive(&message)) {
             // printf("Waiting for message\n\r");
             // time_spinFor(msecs(100));

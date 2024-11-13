@@ -127,7 +127,7 @@ void handle_message_based_on_id(CanMessage* message) {
 
     case 0x20: // Solenoid ID
         printf("Received message with id 0x20\n\r");
-        fire_solenoid(message->data);
+        fire_solenoid();
         break;
     
     default:
