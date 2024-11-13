@@ -125,7 +125,7 @@ void handle_message_based_on_id(CanMessage* message, bool* game_running) {
         if (!(*game_running)) {
             break;
         }
-        printf("Received message with id 0x10\n\r");
+        // printf("Received message with id 0x10\n\r");
         if (should_execute_controller()) {
             PI_controller(decoder_read(), (message->data[0] / 255.0f), message->data[2]);
         }

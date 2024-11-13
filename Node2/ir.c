@@ -9,7 +9,8 @@
 bool ir_hit()
 {
     uint16_t adc_value = adc_read();
-    return adc_value < 1000;
+    printf("ADC value: %d\n\r", adc_value);
+    return adc_value < 2500;
 }
 
 void update_hit_status(bool *hit, uint16_t *health, CanMessage *message)

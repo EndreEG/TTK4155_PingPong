@@ -7,7 +7,7 @@
 #include "pwm.h"
 
 #define Kp 2.1f
-#define T 0.001f
+#define T 0.01f
 #define Ki 5.1f
 
 void set_motor_pos(uint8_t data[8]) {
@@ -53,7 +53,7 @@ void PI_controller_init() {
     REG_TC0_IER0 = TC_IER_CPCS;
     TC0->TC_CHANNEL[0].TC_IMR = TC_IMR_CPCS;
     REG_TC0_CCR0 = TC_CCR_CLKEN | TC_CCR_SWTRG;
-    REG_TC0_RC0 = 1000;
+    REG_TC0_RC0 = (84000000 / 128) * 100 / 1000;
     
     ref_pos = 0;
     actual_pos = 0;

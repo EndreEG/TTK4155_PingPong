@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ir.h"
+#include "motor.h"
 #include "game.h"
 #include "can.h"
+#include "box_interface.h"
 
 void run_game() {
     printf("Game is running\n\r");
@@ -24,5 +26,6 @@ void run_game() {
             handle_message_based_on_id(&message, &_game_running);
         }
     }
+    PI_controller(0, 0, LEFT);
     printf("Game over\n\r");
 }

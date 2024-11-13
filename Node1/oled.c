@@ -129,6 +129,7 @@ void oled_pos(uint8_t page, uint8_t col) {
 }
 
 uint8_t move_arrow(uint8_t arrow_pos, int8_t direction) {
+    printf("Direction: %d\n\r", direction);
     if (direction == NEUTRAL || direction == RIGHT || direction == LEFT) {
         return arrow_pos;
     }
@@ -149,7 +150,7 @@ uint8_t move_arrow(uint8_t arrow_pos, int8_t direction) {
 
     invert_menu_item(arrow_pos, 1); // inverted the current menu item
     oled_print_arrow(arrow_pos, 0);
-    printf("Arrow pos: %d, Direction: %d\n\r", arrow_pos, direction);
+    // printf("Arrow pos: %d, Direction: %d\n\r", arrow_pos, direction);
     return arrow_pos;
 }
 
