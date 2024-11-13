@@ -8,8 +8,10 @@
 #include "time.h"
 #include "pwm.h"
 #include "motor.h"
+#include "box_interface.h"
 #include "utilities.h"
 #include "ir.h"
+#include "decoder.h"
 
 int main()
 {
@@ -32,6 +34,7 @@ int main()
     adc_init();
     motor_init();
     solenoid_init();
+    decoder_init();
 
 
     CanMessage message;
@@ -39,10 +42,12 @@ int main()
 
     bool hit = false;
     uint16_t health = 100;
+    uint16_t decoder_value = 0;
     while (1)
     {
-        // fire_solenoid();
-        // time_spinFor(msecs(1000));
+        decoder_value = decoder_read();
+        printf("Decoder value: %d\n\r", decoder_value);
+
         update_hit_status(&hit, &health, &message);
         
         if(!can_receive(&message)) {
@@ -54,12 +59,6 @@ int main()
             handle_message_based_on_id(&message);
             // time_spinFor(msecs(500));
         }
-    //     // can_print_message(&message);
-    //     // printf("Hello World\n\r");
-    //     // PIOB->PIO_CODR = PIO_PB13;
-    //     // time_spinFor(msecs(2500));
-    //     // PIOB->PIO_SODR = PIO_PB13;
-    //     // time_spinFor(msecs(500));
     }
     
 }

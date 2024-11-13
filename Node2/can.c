@@ -1,9 +1,10 @@
+#include <stdio.h>
 #include "sam.h"
+#include "time.h"
 #include "can.h"
 #include "utilities.h"
 #include "box_interface.h"
-#include "time.h"
-#include <stdio.h>
+#include "decoder.h"
 
 void can_print_message(CanMessage* message){
     printf("CanMessage with id:%d, length:%d, data:{", message->id, message->length);
@@ -121,6 +122,9 @@ void handle_message_based_on_id(CanMessage* message) {
     switch (message->id)
     {
     case 0x10: // Joystick ID
+        // if (should_execute_controller()) {
+        //     PI_controller(decoder_read(), message->data[0], message->data[2]);
+        // }
         set_motor_pos(message->data);
         set_servo_pos(message->data);
         break;

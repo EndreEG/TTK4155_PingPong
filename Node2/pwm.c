@@ -49,7 +49,7 @@ void pwm_init() {
 void pwm_set_duty_cycle(uint32_t duty_cycle, uint32_t channel) {
     if (channel == 0) {
         REG_PWM_CDTY0 = duty_cycle; // Motor
-        printf("Setting duty cycle to %d\n\r", duty_cycle);
+        // printf("Setting duty cycle to %d\n\r", duty_cycle, __FILE__, __LINE__);
     }
     else if (channel == 1) {
         if ((duty_cycle < DUTY_CYCLE_MAX) && (duty_cycle > DUTY_CYCLE_MIN))
