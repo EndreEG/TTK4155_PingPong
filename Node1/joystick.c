@@ -6,7 +6,11 @@
 
 void joystick_init() {
     clear_bit(DDRB, DDB2); // Set PB2 as input for joystick button (redundant)
+    clear_bit(DDRB, DDB1); // Set PB1 as input for joystick button (redundant)
+    clear_bit(DDRB, DDB0); // Set PB0 as input for joystick button (redundant)
     set_bit(PORTB, PB2); // Enable pull-up resistor on PB2
+    clear_bit(PORTB, PB1); // Disable pull-up resistor on PB1
+    clear_bit(PORTB, PB0); // Disable pull-up resistor on PB0
 }
 
 uint8_t joystick_position_calibration() {
@@ -35,11 +39,11 @@ JoystickPosition get_joystick_position() {
     uint8_t adc_readings[4];
     adc_read(&adc_readings);
     pos.x = adc_readings[0];
+    pos.y = adc_readings[1];
     if (pos.x < 1) {
         pos.x = 1;
     }
 
-    pos.y = adc_readings[1];
     return pos;
 }
 
@@ -58,7 +62,7 @@ JoystickDirection get_joystick_direction(JoystickPosition pos) {
 }
 
 uint8_t is_joystick_button_pressed(){
-    return !test_bit(PINB, PB2);
+    return !test_bit(PINB, PB2) || test_bit(PINB, PB1) || test_bit(PINB, PB0);
 }
 
 void joystick_transmit(CanMessage* message, JoystickPosition* pos) {

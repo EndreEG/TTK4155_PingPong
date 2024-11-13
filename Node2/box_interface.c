@@ -6,9 +6,9 @@
 #include "motor.h"
 #include "pwm.h"
 
-#define Kp 0.5f
+#define Kp 2.1f
 #define T 0.001f
-#define Ki 1.5f
+#define Ki 5.1f
 
 void set_motor_pos(uint8_t data[8]) {
     uint8_t x_pos = data[0];
@@ -77,8 +77,21 @@ void set_reference_position(uint8_t pos) {
 
 void PI_controller(float _actual_pos, float _ref_pos, uint8_t direction) {
     static float error_sum = 0;
+    static enum MotorDirection dir = 0;
     error = _ref_pos - _actual_pos;
-    error_sum += error;
+    if (error > 0) {
+        dir = RIGHT;
+    }
+    else {
+        dir = LEFT;
+        error = -error;
+    }
+    if (error > 0.1 || error < -0.1) {
+        error_sum = 0;
+    }
+    else {
+        error_sum += error;
+    }
     float u = (Kp * error + T * Ki * error_sum) * 25000;
     if (u > 20000) {
         u = 20000;
@@ -86,7 +99,7 @@ void PI_controller(float _actual_pos, float _ref_pos, uint8_t direction) {
     else if (u < 0) {
         u = 0;
     }
-    set_motor_direction((enum MotorDirection)direction);
+    set_motor_direction(dir);
     pwm_set_duty_cycle(u, 0);
     execute_controller = 0;
     printf("Actual: %f, Ref: %f, dir: %d, e: %f, e_sum: %f, u: %f\n\r", _actual_pos, _ref_pos, direction, error, error_sum, u, __FILE__, __LINE__);

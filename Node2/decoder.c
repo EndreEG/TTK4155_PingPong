@@ -31,7 +31,7 @@ void decoder_init() {
 
 float decoder_read() {
     if (REG_TC2_CV0 > MAX_DECODER_VALUE) {
-        return MAX_DECODER_VALUE;
+        return 1;
     }
     else if (REG_TC2_CV0 < MIN_DECODER_VALUE) {
         return MIN_DECODER_VALUE;
