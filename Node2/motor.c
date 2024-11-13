@@ -20,11 +20,11 @@ void set_motor_direction(enum MotorDirection direction) {
     switch (direction)
     {
     case LEFT:
-        printf("LEFT\n\r");
+        // printf("LEFT\n\r");
         PIOC->PIO_SODR = PIO_PC23;
         break;
     case RIGHT:
-        printf("RIGHT\n\r");
+        // printf("RIGHT\n\r");
         PIOC->PIO_CODR = PIO_PC23;
         break;
     default:

@@ -5,7 +5,7 @@ MCUTYPE = __SAM3X8E__
 # In particular, remember to add the UART and CAN starter files.
 # Use relative file paths and a backslash before newline.
 # Do NOT use a backslash after the last file.
-SOURCE_FILES = $(BOOTUP) main.c can.c time.c uart.c utilities.c pwm.c box_interface.c adc.c ir.c motor.c decoder.c
+SOURCE_FILES = $(BOOTUP) main.c can.c time.c uart.c utilities.c pwm.c box_interface.c adc.c ir.c motor.c decoder.c game.c
 
 # Feel free to ignore anything below this line
 VPATH:= $(dir $(SOURCE_FILES))

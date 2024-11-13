@@ -48,4 +48,4 @@ void can_transmit(CanMessage* message);
 void can_construct_message(CanMessage* message, uint16_t id, uint8_t* data);
 void can_print_message(CanMessage* message);
 bool can_receive(CanMessage* message);
-void handle_message_based_on_id(CanMessage* message);
+void handle_message_based_on_id(CanMessage* message, uint8_t* dead);

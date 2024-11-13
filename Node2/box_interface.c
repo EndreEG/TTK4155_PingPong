@@ -102,5 +102,5 @@ void PI_controller(float _actual_pos, float _ref_pos, uint8_t direction) {
     set_motor_direction(dir);
     pwm_set_duty_cycle(u, 0);
     execute_controller = 0;
-    printf("Actual: %f, Ref: %f, dir: %d, e: %f, e_sum: %f, u: %f\n\r", _actual_pos, _ref_pos, direction, error, error_sum, u, __FILE__, __LINE__);
+    // printf("Actual: %f, Ref: %f, dir: %d, e: %f, e_sum: %f, u: %f\n\r", _actual_pos, _ref_pos, direction, error, error_sum, u, __FILE__, __LINE__);
 }

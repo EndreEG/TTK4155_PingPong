@@ -66,6 +66,53 @@ state main_menu(){
 
 state play(){
     printf("Play\n\r");
+	CanMessage message;
+    can_construct_message(&message, 0x30, "PLAY");
+    can_transmit(&message);
+
+	JoystickPosition pos;
+	JoystickDirection dir;
+	uint8_t button_pressed;
+    uint8_t dead = 0;
+
+
+	printf("Entering loop\n\r");
+	message.id = 0x10;
+	message.length = 8;
+
+	uint64_t counter = 0;
+
+	uint16_t midpoint_x = find_midpoint();
+	while (!dead) {
+
+		if (is_joystick_button_pressed()) {
+			printf("Button not pressed\n\r");
+			message.id = 0x20;
+			_delay_ms(250);
+		}
+
+		else {
+			pos = get_joystick_position();
+			dir = get_joystick_direction(pos);
+
+			BONK_BONK(&pos, midpoint_x);
+
+
+			message.id = 0x10;
+			message.data[0] = pos.x;
+			message.data[1] = pos.y;
+			message.data[2] = dir;
+			message.data[3] = midpoint_x;
+		}
+
+		can_transmit(&message);
+		if (can_receive(&message)) {
+			handle_message_based_on_id(&message, &dead);
+		}
+
+		_delay_ms(10);
+	}
+
     return MAIN_MENU;
 }
 

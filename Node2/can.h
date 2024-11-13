@@ -164,6 +164,6 @@ void can_transmit(CanMessage m);
 // Does not block. Returns 0 if there is no message, 1 otherwise
 uint8_t can_receive(CanMessage* m);
 
-void handle_message_based_on_id(CanMessage* message);
+void handle_message_based_on_id(CanMessage* message, bool* game_running);
 
 

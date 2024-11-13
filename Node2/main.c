@@ -37,28 +37,20 @@ int main()
     decoder_init();
     PI_controller_init();
 
-
+    bool game_running = false;
     CanMessage message;
-	can_construct_message(&message, 4, "LOL123");
+    // can_construct_message(&message, 0x01, "DEAD");
+    // can_transmit(message);
+    can_construct_message(&message, 0x100, "ffD");
+    can_transmit(message);
 
-    bool hit = false;
-    uint16_t health = 100;
-    float decoder_value = 0;
-    while (1)
-    {
-        // decoder_value = decoder_read();
-        // printf("Decoder value: %.6f\n\r", decoder_value);
-
-        update_hit_status(&hit, &health, &message);
-        
-        if(!can_receive(&message)) {
-            // printf("Waiting for message\n\r");
-            // time_spinFor(msecs(100));
+    while(1) {
+        if (can_receive(&message)) {
+            handle_message_based_on_id(&message, &game_running);
         }
-        else {
-            // can_print_message(&message);
-            handle_message_based_on_id(&message);
-            // time_spinFor(msecs(500));
+        if (game_running) {
+            run_game();
+            game_running = false;
         }
     }
     

@@ -63,10 +63,11 @@ bool can_receive(CanMessage* message) {
     return true;
 }
 
-void handle_message_based_on_id(CanMessage* message) {
+void handle_message_based_on_id(CanMessage* message, uint8_t* dead) {
     switch (message->id)
     {
     case 0x01: // U Ded ID
+        *dead = 1;
         printf("Received message with id 0x01\n\r");
         printf("Game over\n\r");
         break;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "joystick.h"
+#include "utilities.h"
 #include "adc.h"
 #include "can.h"
 

@@ -118,10 +118,14 @@ uint8_t can_receive(CanMessage* m){
     return 1;
 }
 
-void handle_message_based_on_id(CanMessage* message) {
+void handle_message_based_on_id(CanMessage* message, bool* game_running) {
     switch (message->id)
     {
     case 0x10: // Joystick ID
+        if (!(*game_running)) {
+            break;
+        }
+        printf("Received message with id 0x10\n\r");
         if (should_execute_controller()) {
             PI_controller(decoder_read(), (message->data[0] / 255.0f), message->data[2]);
         }
@@ -130,8 +134,16 @@ void handle_message_based_on_id(CanMessage* message) {
         break;
 
     case 0x20: // Solenoid ID
+        if (!(*game_running)) {
+            break;
+        }
         printf("Received message with id 0x20\n\r");
         fire_solenoid();
+        break;
+
+    case 0x30: // Play Game ID
+        printf("Received message with id 0x30\n\r");
+        *game_running = true;
         break;
     
     default:
