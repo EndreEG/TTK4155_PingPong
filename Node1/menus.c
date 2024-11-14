@@ -98,7 +98,7 @@ state play(){
 			BONK_BONK(&pos, midpoint_x);
 
 
-			message.id = 0x10;
+			message.id = JOYSTICK_CAN_ID;
 			message.data[0] = pos.x;
 			message.data[1] = pos.y;
 			message.data[2] = dir;

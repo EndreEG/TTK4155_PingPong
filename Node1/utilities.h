@@ -5,10 +5,10 @@
 #include "avr/io.h"
 #include <avr/pgmspace.h>
 
-#define F_CPU 4915200//16000000
+#define F_CPU 4915200
 #include "util/delay.h"
 
-#define FOSC 4915200 // Crystal oscillator frequency
+#define FOSC 4915200
 #define BAUDRATE 9600
 #define MYUBBR FOSC/16/BAUDRATE - 1
 

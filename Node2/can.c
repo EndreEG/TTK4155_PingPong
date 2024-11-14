@@ -6,6 +6,10 @@
 #include "box_interface.h"
 #include "decoder.h"
 
+#define JOYSTICK_ID 0x10
+#define SOLENOID_ID 0x20
+#define PLAY_GAME_ID 0x30
+
 void can_print_message(CanMessage* message){
     printf("CanMessage with id:%d, length:%d, data:{", message->id, message->length);
     for(uint8_t i = 0; i < message->length; i++){
@@ -121,7 +125,7 @@ uint8_t can_receive(CanMessage* m){
 void handle_message_based_on_id(CanMessage* message, bool* game_running) {
     switch (message->id)
     {
-    case 0x10: // Joystick ID
+    case JOYSTICK_ID: // Joystick ID
         if (!(*game_running)) {
             break;
         }
@@ -133,7 +137,7 @@ void handle_message_based_on_id(CanMessage* message, bool* game_running) {
         set_servo_pos(message->data);
         break;
 
-    case 0x20: // Solenoid ID
+    case SOLENOID_ID: // Solenoid ID
         if (!(*game_running)) {
             break;
         }
@@ -141,7 +145,7 @@ void handle_message_based_on_id(CanMessage* message, bool* game_running) {
         fire_solenoid();
         break;
 
-    case 0x30: // Play Game ID
+    case PLAY_GAME_ID: // Play Game ID
         printf("Received message with id 0x30\n\r");
         *game_running = true;
         break;
