@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "sram.h": "c",
+        "fonts.h": "c",
+        "stdlib.h": "c",
+        "utilities.h": "c",
+        "joystick.h": "c",
+        "can.h": "c",
+        "uart.h": "c",
+        "menus.h": "c",
+        "oled.h": "c",
+        "mcp.h": "c",
+        "adc.h": "c",
+        "stdio.h": "c",
+        "io.h": "c"
+    }
+}

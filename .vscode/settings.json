@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "uart.h": "c",
+        "utilities.h": "c",
+        "joystick.h": "c",
+        "mcp.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "spi.h": "c",
+        "can.h": "c"
+    }
+}

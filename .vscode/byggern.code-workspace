@@ -1,0 +1,36 @@
+{
+    "folders": [
+        {
+            "path": "../Node1"
+        },       
+        {
+            "path": "../Node2"
+        },
+        {
+            "path": "../"
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "sam.h": "c",
+            "sam3x8e.h": "c",
+            "stdarg.h": "c",
+            "uart.h": "c",
+            "utilities.h": "c",
+            "can.h": "c",
+            "menus.h": "c",
+            "mcp.h": "c",
+            "pwm.h": "c",
+            "time.h": "c",
+            "box_interface.h": "c",
+            "adc.h": "c",
+            "joystick.h": "c",
+            "ir.h": "c",
+            "motor.h": "c",
+            "stdint.h": "c",
+            "stdbool.h": "c",
+            "decoder.h": "c"
+        }
+    },
+
+}
