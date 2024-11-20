@@ -36,5 +36,5 @@ JoystickPosition get_joystick_position();
 uint8_t is_joystick_button_pressed();
 // uint8_t joystick_position_calibration();
 void joystick_transmit(CanMessage * message, JoystickPosition *pos);
-void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x);
-uint16_t find_midpoint();
+void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x, uint16_t midpoint_y);
+void find_midpoint(uint16_t *midpoint_x, uint16_t *midpoint_y);

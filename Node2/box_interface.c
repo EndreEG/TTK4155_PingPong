@@ -8,7 +8,7 @@
 
 #define Kp 2.1f
 #define T 0.01f
-#define Ki 5.1f
+#define Ki 10.1f
 
 void set_motor_pos(uint8_t data[8]) {
     uint8_t x_pos = data[0];
@@ -79,6 +79,7 @@ void PI_controller(float _actual_pos, float _ref_pos, uint8_t direction) {
     static float error_sum = 0;
     static enum MotorDirection dir = 0;
     error = _ref_pos - _actual_pos;
+    // printf("Actual: %f, Ref: %f, dir: %d, e: %f, e_sum: %f\n\r", _actual_pos, _ref_pos, direction, error, error_sum);
     if (error > 0) {
         dir = RIGHT;
     }

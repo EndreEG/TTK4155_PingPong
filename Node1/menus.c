@@ -74,6 +74,8 @@ state play(){
 	JoystickDirection dir;
 	uint8_t button_pressed;
     uint8_t dead = 0;
+    uint16_t midpoint_x;
+    uint16_t midpoint_y;
 
 
 	printf("Entering loop\n\r");
@@ -82,11 +84,12 @@ state play(){
 
 	uint64_t counter = 0;
 
-	uint16_t midpoint_x = find_midpoint();
+	find_midpoint(&midpoint_x, &midpoint_y);
+    printf("Midpoint: %d\n\r", midpoint_x);
 	while (!dead) {
 
 		if (is_joystick_button_pressed()) {
-			printf("Button not pressed\n\r");
+			// printf("Button not pressed\n\r");
 			message.id = 0x20;
 			_delay_ms(250);
 		}
@@ -95,7 +98,7 @@ state play(){
 			pos = get_joystick_position();
 			dir = get_joystick_direction(pos);
 
-			BONK_BONK(&pos, midpoint_x);
+			BONK_BONK(&pos, midpoint_x, midpoint_y);
 
 
 			message.id = JOYSTICK_CAN_ID;
