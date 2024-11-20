@@ -1,6 +1,9 @@
 #include "can.h"
 #include "mcp.h"
 
+#define GAME_OVER 0x01
+#define HIT 0x02
+
 void can_init() {
     mcp_init();
     mcp_write(MCP_RXB0CTRL, 0x60); // Enable receive buffer 0, higher priority buffer. Turn mask/filters off
@@ -49,8 +52,8 @@ bool can_receive(CanMessage* message) {
     }
 
     message->length = mcp_read(RXB0DLC);
-    message->id = ((uint16_t)mcp_read(RXB0SIDH)) << 3;
-    message->id |= ((uint16_t)mcp_read(RXB0SIDL) >> 5) & 0b111;
+    message->id = ((uint16_t)mcp_read(RXB0SIDH)) << 3; // High bits of standard identifier
+    message->id |= ((uint16_t)mcp_read(RXB0SIDL) >> 5) & 0b111; // Low bits of standard identifier
 
     for (int i = 0; i < message->length; i++) {
         message->data[i] = mcp_read(RXB0D0 + i);
@@ -66,13 +69,13 @@ bool can_receive(CanMessage* message) {
 void handle_message_based_on_id(CanMessage* message, uint8_t* dead) {
     switch (message->id)
     {
-    case 0x01: // U Ded ID
+    case GAME_OVER: // U Ded ID
         *dead = 1;
         printf("Received message with id 0x01\n\r");
         printf("Game over\n\r");
         break;
 
-    case 0x02: // Hit ID
+    case HIT: // Hit ID
         printf("Received message with id 0x02\n\r");
         printf("You got hit: You have %d lived left.\n\r", message->data[0]);
         break;

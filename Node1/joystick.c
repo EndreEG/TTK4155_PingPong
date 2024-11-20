@@ -14,26 +14,26 @@ void joystick_init() {
     clear_bit(PORTB, PB0); // Disable pull-up resistor on PB0
 }
 
-uint8_t joystick_position_calibration() {
-    JoystickPosition pos;
-    uint32_t sum_x = 0;
-    uint32_t sum_y = 0;
-    uint16_t samples = 1000; // Number of samples for calibration
+// uint8_t joystick_position_calibration() {
+//     JoystickPosition pos;
+//     uint32_t sum_x = 0;
+//     uint32_t sum_y = 0;
+//     uint16_t samples = 1000; // Does 1000 samples for calibration
 
-    for (uint16_t i = 0; i < samples; i++) {
-        sum_x += pos.x;
-        sum_y += pos.y;
-    }
+//     for (uint16_t i = 0; i < samples; i++) {
+//         sum_x += pos.x;
+//         sum_y += pos.y;
+//     }
 
-    uint16_t avg_x = sum_x / samples;
-    uint16_t avg_y = sum_y / samples;
+//     uint16_t avg_x = sum_x / samples;
+//     uint16_t avg_y = sum_y / samples;
 
-    // Store the calibration values in a global or static variable if needed
-    // calibrated_x = avg_x;
-    // calibrated_y = avg_y;
+//     // Store the calibration values in a global or static variable if needed
+//     // calibrated_x = avg_x;
+//     // calibrated_y = avg_y;
 
-    return (avg_x + avg_y) / 2; // Return the average calibration value
-}
+//     return (avg_x + avg_y) / 2; // Return the average calibration value
+// }
 
 JoystickPosition get_joystick_position() {
     JoystickPosition pos;
@@ -41,7 +41,7 @@ JoystickPosition get_joystick_position() {
     adc_read(&adc_readings);
     pos.x = adc_readings[0];
     pos.y = adc_readings[1];
-    if (pos.x < 1) {
+    if (pos.x < 1) { 
         pos.x = 1;
     }
 
@@ -63,8 +63,8 @@ JoystickDirection get_joystick_direction(JoystickPosition pos) {
 }
 
 uint8_t is_joystick_button_pressed(){
-    return !test_bit(PINB, PB2) || test_bit(PINB, PB1) || test_bit(PINB, PB0);
-}
+    return !test_bit(PINB, PB2) || test_bit(PINB, PB1) || test_bit(PINB, PB0); // Returns 1 if any of the buttons are pressed.
+} // PB2 is the joystick button, PB1 and PB0 are the capacitive buttons
 
 void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
     uint8_t position[2] = {pos->x, pos->y};
@@ -76,7 +76,7 @@ void joystick_transmit(CanMessage* message, JoystickPosition* pos) {
 }
 
 void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x) {
-    // Fryser ved (50, 190), (0, 61), (166, 190), (53, 237)
+    // Fryser ved (50, 190), (0, 61), (166, 190), (53, 237) av en eller annen merkelig grunn
 
     if (pos->x == 0 && pos->y == 61) {
         pos->x = 0;
@@ -102,7 +102,7 @@ void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x) {
     if ((midpoint_x -3 < pos->x) && (pos->x < midpoint_x + 3)) {
         pos->x = midpoint_x;
     }
-    if ((MIDPOINT_Y -3 < pos->y) && (pos->y < MIDPOINT_Y + 3)) {
+    if ((MIDPOINT_Y -3 < pos->y) && (pos->y < MIDPOINT_Y + 3)) { // Burde kanskje lage en kalibreringsfunksjon for y også
         pos->y = MIDPOINT_Y;
     }
 }
@@ -110,7 +110,7 @@ void BONK_BONK(JoystickPosition *pos, uint16_t midpoint_x) {
 uint16_t find_midpoint() {
     JoystickPosition pos;
     uint32_t sum_x = 0;
-    // uint32_t sum_y = 0;
+    // uint32_t sum_y = 0; // Not used
     uint16_t samples = 9000; // Number of samples for calibration
 
     for (uint16_t i = 0; i < samples; i++) {

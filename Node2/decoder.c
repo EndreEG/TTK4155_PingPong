@@ -19,7 +19,7 @@ void decoder_init() {
     TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG;
 }
 
-float decoder_read() {
+float decoder_read() { // Returns a value between 0 and 1
     if (REG_TC2_CV0 > MAX_DECODER_VALUE) {
         return 1;
     }
